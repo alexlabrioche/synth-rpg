@@ -9,22 +9,26 @@ import {
 import { characterRepo } from "../repo/memory.repo";
 
 interface GenerateCharacterInput {
-  capabilities: CapabilityId[];
+  capabilityIds: CapabilityId[];
   lang: Lang;
 }
 
 export async function generateCharacter(
   input: GenerateCharacterInput
 ): Promise<Character> {
-  const baseStats = deriveBaseStats(input.capabilities);
-  const stats = applyInitialVariance(baseStats);
-
   const dictionary =
     CAPABILITY_TRANSLATIONS[input.lang] ?? CAPABILITY_TRANSLATIONS.en;
 
   const capabilities = CAPABILITY_ARRAY.filter((icon) =>
-    input.capabilities.includes(icon.id)
+    input.capabilityIds.includes(icon.id)
   );
+
+  if (capabilities.length === 0) {
+    throw new Error("No valid capabilities were provided");
+  }
+
+  const baseStats = deriveBaseStats(capabilities);
+  const stats = applyInitialVariance(baseStats);
 
   const capabilitySummaries = capabilities
     .map((capability) => {
@@ -60,4 +64,12 @@ export async function generateCharacter(
   };
 
   return characterRepo.save(character);
+}
+
+export function getCharacterById(id: string) {
+  return characterRepo.get(id);
+}
+
+export function listCharacters() {
+  return characterRepo.getAll();
 }

@@ -3,6 +3,8 @@ import type { Lang } from "@synth-rpg/types";
 import {
   CharacterNotFoundError,
   SessionNotFoundError,
+  getSessionDetails,
+  getSessionEvents,
   playNextTurn,
   startSession,
 } from "../services/session.service";
@@ -10,7 +12,7 @@ import {
 export async function sessionRoutes(fastify: FastifyInstance) {
   fastify.post<{
     Body: { characterId: string; lang?: Lang };
-  }>("/sessions/start", async (request, reply) => {
+  }>("/sessions", async (request, reply) => {
     const { characterId, lang = "en" } = request.body ?? {};
 
     if (!characterId || typeof characterId !== "string") {
@@ -27,18 +29,35 @@ export async function sessionRoutes(fastify: FastifyInstance) {
 
       request.log.error(
         { err, stack: err?.stack, message: err?.message },
-        "Failed to start session"
+        "Failed to create session"
       );
       return reply.code(500).send({
-        error: "Failed to start session",
+        error: "Failed to create session",
         detail: err?.message ?? "Unknown error",
       });
     }
   });
 
+  fastify.get<{
+    Params: { sessionId: string };
+  }>("/sessions/:sessionId", async (request, reply) => {
+    const { sessionId } = request.params ?? {};
+
+    if (!sessionId || typeof sessionId !== "string") {
+      return reply.code(400).send({ error: "sessionId is required" });
+    }
+
+    const details = getSessionDetails(sessionId);
+    if (!details) {
+      return reply.code(404).send({ error: "Session not found" });
+    }
+
+    return details;
+  });
+
   fastify.post<{
     Params: { sessionId: string };
-  }>("/sessions/:sessionId/turn", async (request, reply) => {
+  }>("/sessions/:sessionId/turns", async (request, reply) => {
     const { sessionId } = request.params ?? {};
 
     if (!sessionId || typeof sessionId !== "string") {
@@ -65,5 +84,23 @@ export async function sessionRoutes(fastify: FastifyInstance) {
         detail: err?.message ?? "Unknown error",
       });
     }
+  });
+
+  fastify.get<{
+    Params: { sessionId: string };
+  }>("/sessions/:sessionId/events", async (request, reply) => {
+    const { sessionId } = request.params ?? {};
+
+    if (!sessionId || typeof sessionId !== "string") {
+      return reply.code(400).send({ error: "sessionId is required" });
+    }
+
+    const details = getSessionDetails(sessionId);
+    if (!details) {
+      return reply.code(404).send({ error: "Session not found" });
+    }
+
+    const events = getSessionEvents(sessionId);
+    return { events };
   });
 }

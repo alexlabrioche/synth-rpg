@@ -1,8 +1,14 @@
-import type { CapabilityId, CharacterStats } from "@synth-rpg/types";
+import type { CharacterStats, Capability } from "@synth-rpg/types";
+import { CapabilityCategory } from "@synth-rpg/types";
 import { clamp } from "../utils/clamp";
 import { rollDie } from "../utils/roll-die";
 
-export function deriveBaseStats(ids: CapabilityId[]): CharacterStats {
+type CapabilityLike = Pick<Capability, "slug" | "category">;
+
+const slugIncludes = (capability: CapabilityLike, fragment: string) =>
+  capability.slug.toLowerCase().includes(fragment);
+
+export function deriveBaseStats(capabilities: CapabilityLike[]): CharacterStats {
   const s: CharacterStats = {
     density: 0,
     chaos: 0,
@@ -12,21 +18,44 @@ export function deriveBaseStats(ids: CapabilityId[]): CharacterStats {
     spatiality: 0,
   };
 
-  ids.forEach((id) => {
-    if (id.includes("OSC")) {
+  capabilities.forEach((capability) => {
+    if (
+      capability.category === CapabilityCategory.Oscillator ||
+      slugIncludes(capability, "vco") ||
+      slugIncludes(capability, "osc")
+    ) {
       s.density += 2;
     }
-    if (id.includes("RANDOM")) {
+
+    if (
+      slugIncludes(capability, "random") ||
+      slugIncludes(capability, "noise")
+    ) {
       s.chaos += 2;
     }
-    if (id.includes("SEQUENCER")) {
+
+    if (
+      slugIncludes(capability, "seq") ||
+      slugIncludes(capability, "pattern") ||
+      capability.category === CapabilityCategory.Sequencer
+    ) {
       s.stability += 2;
       s.percussiveness += 1;
     }
-    if (id.includes("GRANULAR") || id.includes("DELAY")) {
+
+    if (
+      slugIncludes(capability, "granular") ||
+      slugIncludes(capability, "delay") ||
+      slugIncludes(capability, "reverb")
+    ) {
       s.spatiality += 2;
     }
-    if (id.includes("ENVELOPE") || id.includes("LFO")) {
+
+    if (
+      slugIncludes(capability, "env") ||
+      slugIncludes(capability, "envelope") ||
+      slugIncludes(capability, "lfo")
+    ) {
       s.expressivity += 1;
     }
   });

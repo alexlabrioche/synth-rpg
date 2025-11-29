@@ -105,6 +105,40 @@
           "description": "capabilities.microphone-input.description"
         }
       ]
+    },
+    {
+      "id": "a12b8e77-ec3d-4fea-829b-85a5d73ff394",
+      "name": "Lumineuse",
+      "archetype": "Poète Éphemère",
+      "traits": [
+        "Eau qui danse",
+        "Souffle de la nuit"
+      ],
+      "stats": {
+        "density": 5,
+        "chaos": 4,
+        "stability": 3,
+        "percussiveness": 3,
+        "expressivity": 1,
+        "spatiality": 3
+      },
+      "description": "Créateur de sons éphémères, capable d'extraire les émotions des buffers sonores. Son poésie est une juxtaposition de textures et de timbres.",
+      "capabilities": [
+        {
+          "id": "7b79f763-bb88-4591-b60a-d46b28e3762a",
+          "slug": "granular-synth",
+          "category": "oscillator",
+          "label": "capabilities.granular-synth.label",
+          "description": "capabilities.granular-synth.description"
+        },
+        {
+          "id": "52177c8e-44f3-44b7-8a18-c711e199c720",
+          "slug": "microphone-input",
+          "category": "oscillator",
+          "label": "capabilities.microphone-input.label",
+          "description": "capabilities.microphone-input.description"
+        }
+      ]
     }
   ],
   "sessions": [
@@ -219,6 +253,22 @@
       },
       "phase": "IN_PROGRESS",
       "createdAt": "2025-11-29T19:31:34.217Z"
+    },
+    {
+      "id": "8cd59b22-79b3-4c68-ba89-75122219f42a",
+      "characterId": "a12b8e77-ec3d-4fea-829b-85a5d73ff394",
+      "lang": "fr",
+      "turn": 2,
+      "stats": {
+        "density": 5,
+        "chaos": 6,
+        "stability": 1,
+        "percussiveness": 3,
+        "expressivity": 1,
+        "spatiality": 3
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T19:52:04.377Z"
     }
   ],
   "events": [
@@ -432,6 +482,34 @@
         "Introduisez des notes discordantes sans heurts"
       ],
       "description": "La musique se brise et se reforme, comme un reflet dans l’eau tumultueuse."
+    },
+    {
+      "id": "2cfc7c6a-8eb5-485a-8682-60ffa7cee166",
+      "sessionId": "8cd59b22-79b3-4c68-ba89-75122219f42a",
+      "turn": 1,
+      "kind": "MUTATION",
+      "roll": 5,
+      "title": "Résonance Évolutive",
+      "instructions": "Faites vibrer le patch comme un arc-en-ciel éclatant, alors que les notes se transforment en une nouvelle harmonie.",
+      "constraints": [
+        "[« Résonnez avec une pureté cristalline », « Soulevez le champ sonore », 'Transformez les fréquences »]"
+      ],
+      "description": "La musique s'ouvre à de nouvelles profondeurs, tandis que l'éphémère devient éternel. Une résonance métamorphique se déploie."
+    },
+    {
+      "id": "11eb8b16-8b37-4d78-b938-353cfc434d2d",
+      "sessionId": "8cd59b22-79b3-4c68-ba89-75122219f42a",
+      "turn": 2,
+      "kind": "MUTATION",
+      "roll": 3,
+      "title": "Reconfigurer l'Onde",
+      "instructions": "Laisser la vague se réfléchir en vous, comme un miroir d'eau agitée. Laissent la note s'effacer et refaire surface.",
+      "constraints": [
+        "Maintenez l'équilibre entre les textures qui se dégarnissent",
+        "Comblage des silences avec une nouvelle fréquence",
+        "Permettez que le bruit des ailes vous submerge"
+      ],
+      "description": "L'onde rebondit comme un oiseau sur l'eau froide. Nouveau paysage, nouvelles harmonies."
     }
   ],
   "preludes": [
@@ -461,6 +539,15 @@
       "scene": "Dans la vallée de l'écho, les machines grondent et s'éveillent en résonance.",
       "lore": "L'Astrum Fugax est un poète sonore qui navigue entre l'Éclat Silencieux et les Ondes Éphémères. Ses Fractures de Bruit éclairent le chemin dans un univers où la Percussivité et l'Expressivité sont les pilotes de l'univers.",
       "tone": "Mystère, Rêve, Liberté"
+    },
+    {
+      "id": "38a11268-6214-4140-a8f2-5bb9e444ee99",
+      "sessionId": "8cd59b22-79b3-4c68-ba89-75122219f42a",
+      "title": "La danse éphémère de Lumineuse",
+      "invitation": "Ouvrez vos voix, laissez les sons se libérer... La nuit s'éveille",
+      "scene": "Dans la vallée des brumes, les machines grondent, leur souffle devient musicale",
+      "lore": "Lumineuse est une poétesse qui danse avec l'eau, son esprit est un mélange de stabilité et de chaos, sa voix exprime les profondeurs de la nuit",
+      "tone": "Ephémère,Mysterieux,Sonore"
     }
   ]
 }

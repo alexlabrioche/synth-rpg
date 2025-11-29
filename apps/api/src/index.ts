@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import { capabilityRoutes } from "./routes/capability.routes";
 import { characterRoutes } from "./routes/character.routes";
 import { sessionRoutes } from "./routes/session.routes";
 
@@ -6,6 +7,7 @@ const fastify = Fastify({
   logger: true,
 });
 
+fastify.register(capabilityRoutes, { prefix: "/api/v1" });
 fastify.register(characterRoutes, { prefix: "/api/v1" });
 fastify.register(sessionRoutes, { prefix: "/api/v1" });
 

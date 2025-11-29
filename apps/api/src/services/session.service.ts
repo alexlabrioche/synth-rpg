@@ -66,14 +66,28 @@ const asStringArray = (value: unknown): string[] | null => {
     .filter((item) => item.length > 0);
 };
 
+const stripQuotes = (value: string) =>
+  value.replace(/^[\s"'“”«»`]+/, "").replace(/[\s"'“”«»`]+$/, "");
+
+const tryFallbackListParse = (raw: string): string[] | null => {
+  const inner = raw.slice(1, -1).trim();
+  if (!inner) return [];
+  const items = inner
+    .split(/[,，]/)
+    .map((item) => stripQuotes(item))
+    .filter((item) => item.length > 0);
+  return items.length > 0 ? items : null;
+};
+
 const tryParseConstraints = (value: string): string[] | null => {
   const trimmed = value.trim();
   if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) return null;
   try {
-    const parsed = JSON.parse(trimmed);
+    const normalized = trimmed.replace(/[“”«»]/g, '"');
+    const parsed = JSON.parse(normalized);
     return asStringArray(parsed);
   } catch {
-    return null;
+    return tryFallbackListParse(trimmed);
   }
 };
 
@@ -149,6 +163,11 @@ interface PlayNextTurnResult {
   event: GameEvent;
 }
 
+interface SessionDetails {
+  session: Session;
+  prelude: SessionPrelude | null;
+}
+
 export async function playNextTurn(
   input: PlayNextTurnInput
 ): Promise<PlayNextTurnResult> {
@@ -206,4 +225,18 @@ export async function playNextTurn(
     };
 
   return { session: updatedSession, event };
+}
+
+export function getSessionDetails(sessionId: string): SessionDetails | null {
+  const session = sessionRepo.get(sessionId);
+  if (!session) {
+    return null;
+  }
+
+  const prelude = preludeRepo.getBySession(sessionId) ?? null;
+  return { session, prelude };
+}
+
+export function getSessionEvents(sessionId: string): GameEvent[] {
+  return eventRepo.getBySession(sessionId);
 }
