@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+.tanstack/
+
+# Build outputs
+dist/
+build/
+
+# TypeScript metadata
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+
+# Testing
+coverage/
+
+# Environment files
+.env
+.env.*
+!.env.dist
+!.env.*.dist
+
+# Editor / OS artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
