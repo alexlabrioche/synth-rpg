@@ -1,0 +1,466 @@
+{
+  "characters": [
+    {
+      "id": "560da259-f548-495e-bfc2-186b388b7092",
+      "name": "Abyssal",
+      "archetype": "Chaos Sonique",
+      "traits": [
+        "Eau Turbulente",
+        "Fureur Rhythmique",
+        "Dérive Texturale"
+      ],
+      "stats": {
+        "density": 1,
+        "chaos": 4,
+        "stability": 3,
+        "percussiveness": 3,
+        "expressivity": 5,
+        "spatiality": 4
+      },
+      "capabilityIds": [
+        "LFO",
+        "GRANULAR_ENGINE",
+        "RANDOM_SOURCE",
+        "SEQUENCER"
+      ],
+      "description": "Créateur de sons imprévisibles, je manipule la modulation pour créer des textures et des rythmes inattendus. La chance est ma compagne fidèle, mais la stabilité est également une valeur importante pour moi."
+    },
+    {
+      "id": "992b1a76-d717-43f7-ba22-227193f2d61f",
+      "name": "Kairos",
+      "archetype": "Poésie Éthérée",
+      "traits": [
+        "Ephemeralité",
+        "Instabilité Dynamique"
+      ],
+      "stats": {
+        "density": 4,
+        "chaos": 4,
+        "stability": 6,
+        "percussiveness": 2,
+        "expressivity": 4,
+        "spatiality": 3
+      },
+      "capabilityIds": [
+        "OSC_ANALOG",
+        "GRANULAR_ENGINE",
+        "RANDOM_SOURCE",
+        "SEQUENCER"
+      ],
+      "description": "Kairos est un être musical qui incarne les contradictions entre la stabilité et le chaos. Avec une capacité à produire des sons analogues, il crée des atmosphères éthérées et poétiques. Le granular engine de Kairos permet de créer des textures complexes, tandis que la séquenceur structure ses modulations pour un résultat expressif et captivant."
+    },
+    {
+      "id": "d6f0d4ae-79df-4471-915d-74f709f7d76c",
+      "name": "EchoFlux",
+      "archetype": "Poêtre Intégrale",
+      "traits": [
+        "Ephemèration",
+        "Môurs sonores"
+      ],
+      "stats": {
+        "density": 2,
+        "chaos": 2,
+        "stability": 4,
+        "percussiveness": 3,
+        "expressivity": 1,
+        "spatiality": 1
+      },
+      "capabilityIds": [
+        "7b79f763-bb88-4591-b60a-d46b28e3762a",
+        "52177c8e-44f3-44b7-8a18-c711e199c720"
+      ],
+      "description": "Créature sonore à mémoire vive, capable de capturer les nuances de l'instant et de les transcrire en harmonies éphémères."
+    },
+    {
+      "id": "61b87a4c-d00a-48f2-a0d1-81a861cf041f",
+      "name": "Astrum Fugax",
+      "archetype": "Poème Sonore",
+      "traits": [
+        "Éclat Silencieux",
+        "Ondes Éphémères",
+        "Fractures de Bruit"
+      ],
+      "stats": {
+        "density": 3,
+        "chaos": 1,
+        "stability": 4,
+        "percussiveness": 2,
+        "expressivity": 1,
+        "spatiality": 1
+      },
+      "description": "Créateur de sons empreints d'élégance et de fragilité, ce personnage utilise les capacités du granular synth pour extraire des nuances subtiles dans les textures sonores. L'entrée microphone permet l'introduction de voix ou d'instruments externes, ajoutant une dimension humaine à la création musicale. Le caractère émotionnel et expressif du travail est renforcé par le niveau faible de percussivité et de spatialité, créant un climat intime et contemplatif.",
+      "capabilities": [
+        {
+          "id": "7b79f763-bb88-4591-b60a-d46b28e3762a",
+          "slug": "granular-synth",
+          "category": "oscillator",
+          "label": "capabilities.granular-synth.label",
+          "description": "capabilities.granular-synth.description"
+        },
+        {
+          "id": "52177c8e-44f3-44b7-8a18-c711e199c720",
+          "slug": "microphone-input",
+          "category": "oscillator",
+          "label": "capabilities.microphone-input.label",
+          "description": "capabilities.microphone-input.description"
+        }
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "id": "99276877-7883-4e1f-b398-674f830bac47",
+      "characterId": "560da259-f548-495e-bfc2-186b388b7092",
+      "lang": "fr",
+      "turn": 1,
+      "stats": {
+        "density": 1,
+        "chaos": 4,
+        "stability": 3,
+        "percussiveness": 3,
+        "expressivity": 5,
+        "spatiality": 4
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:11:34.797Z"
+    },
+    {
+      "id": "2af26c66-9c29-4354-ae41-7f0faf1fb578",
+      "characterId": "560da259-f548-495e-bfc2-186b388b7092",
+      "lang": "fr",
+      "turn": 1,
+      "stats": {
+        "density": 1,
+        "chaos": 4,
+        "stability": 3,
+        "percussiveness": 3,
+        "expressivity": 5,
+        "spatiality": 4
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:13:18.241Z"
+    },
+    {
+      "id": "72b23be2-5943-419f-b135-5a948c2bb498",
+      "characterId": "992b1a76-d717-43f7-ba22-227193f2d61f",
+      "lang": "fr",
+      "turn": 1,
+      "stats": {
+        "density": 4,
+        "chaos": 4,
+        "stability": 6,
+        "percussiveness": 2,
+        "expressivity": 4,
+        "spatiality": 3
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:24:16.591Z"
+    },
+    {
+      "id": "d5a3af69-3884-4347-bdfa-3a5417052ee7",
+      "characterId": "992b1a76-d717-43f7-ba22-227193f2d61f",
+      "lang": "fr",
+      "turn": 1,
+      "stats": {
+        "density": 4,
+        "chaos": 4,
+        "stability": 6,
+        "percussiveness": 2,
+        "expressivity": 4,
+        "spatiality": 3
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:28:57.592Z"
+    },
+    {
+      "id": "48f9487b-2c7d-4ed3-94ae-5d05188e45cb",
+      "characterId": "992b1a76-d717-43f7-ba22-227193f2d61f",
+      "lang": "fr",
+      "turn": 0,
+      "stats": {
+        "density": 4,
+        "chaos": 4,
+        "stability": 6,
+        "percussiveness": 2,
+        "expressivity": 4,
+        "spatiality": 3
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:33:30.110Z"
+    },
+    {
+      "id": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "characterId": "992b1a76-d717-43f7-ba22-227193f2d61f",
+      "lang": "fr",
+      "turn": 10,
+      "stats": {
+        "density": 4,
+        "chaos": 10,
+        "stability": 0,
+        "percussiveness": 2,
+        "expressivity": 7,
+        "spatiality": 4
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T11:33:58.830Z"
+    },
+    {
+      "id": "f30c6189-349a-401e-a911-1f194f86f799",
+      "characterId": "61b87a4c-d00a-48f2-a0d1-81a861cf041f",
+      "lang": "fr",
+      "turn": 1,
+      "stats": {
+        "density": 3,
+        "chaos": 1,
+        "stability": 5,
+        "percussiveness": 2,
+        "expressivity": 4,
+        "spatiality": 2
+      },
+      "phase": "IN_PROGRESS",
+      "createdAt": "2025-11-29T19:31:34.217Z"
+    }
+  ],
+  "events": [
+    {
+      "id": "ac201b71-0019-4b4a-abb3-d15e58ad28b3",
+      "sessionId": "99276877-7883-4e1f-b398-674f830bac47",
+      "turn": 1,
+      "kind": "COMPLICATION",
+      "roll": 9,
+      "title": "La Fracture de l'Harmonie",
+      "instructions": "Risque une note discordante dans le bassin, permet à la fureur de s'emparer d'une nouvelle fréquence.",
+      "constraints": [
+        "Présence d'un ton aigu",
+        "Stabilité réduite",
+        "Émotion intensifiée"
+      ],
+      "description": "Le silence se fissure. La musique cherche à se libérer."
+    },
+    {
+      "id": "f7dde3a0-9a1c-4e7f-8cfc-67e33657c2de",
+      "sessionId": "2af26c66-9c29-4354-ae41-7f0faf1fb578",
+      "turn": 1,
+      "kind": "OPPORTUNITY",
+      "roll": 13,
+      "title": "Lumineuse Résonance",
+      "instructions": "Tentez d'harmoniser l'eau turbulente avec la fureur rhythmique.",
+      "constraints": [
+        "Maintenez la percussivité élevée.",
+        "Ajustez la stabilité pour trouver le juste milieu."
+      ],
+      "description": "Le chaos sonique se réveille, prêt à s'exprimer en liberté."
+    },
+    {
+      "id": "c29b4f99-5a0c-4803-802c-49a57178624a",
+      "sessionId": "72b23be2-5943-419f-b135-5a948c2bb498",
+      "turn": 1,
+      "kind": "OPPORTUNITY",
+      "roll": 16,
+      "title": "Les premières vibrations",
+      "instructions": "Laisse ton esprit se libérer comme les notes qui s'envolent",
+      "constraints": [],
+      "description": "La lumière tremble dans la salle, les brumes se dissiper"
+    },
+    {
+      "id": "42cabf06-0f87-4f90-8d35-e00fbdd0400a",
+      "sessionId": "d5a3af69-3884-4347-bdfa-3a5417052ee7",
+      "turn": 1,
+      "kind": "COMPLICATION",
+      "roll": 9,
+      "title": "L'Ombre Éphémère Se Réveille",
+      "instructions": "Les sons éthérés s'envolent dans l'infini...",
+      "constraints": [],
+      "description": "La lumière du crépuscule enveloppe la forêt."
+    },
+    {
+      "id": "47227cf3-b4e9-469f-9b8e-01484f30b971",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 1,
+      "kind": "COMPLICATION",
+      "roll": 10,
+      "title": "Réajuster le Patch en Ébullition",
+      "instructions": "Laisse le chaos s'emparer du patch. Laissant des traînées éphémères derrière toi.",
+      "constraints": [
+        "Laisser l'instabilité dynamique s'accroître",
+        "Ajouter de la spatialité à chaque note",
+        "Revoir les relations entre les paramètres"
+      ],
+      "description": "L'espace sonore bouge comme un liquide en ébullition, refletant ton état instable"
+    },
+    {
+      "id": "1670e8c5-4b79-496b-805f-2b68505f7bed",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 2,
+      "kind": "BOON",
+      "roll": 18,
+      "title": "Amplification Éthérée",
+      "instructions": "La puissance du jet s'infiltre dans le patch, éveillant une nouvelle dimension.",
+      "constraints": [
+        "[\"Augmentez expressivité à 6\", \"Équilibrez density et chaos\"]"
+      ],
+      "description": "Un souffle de poésie éthérée éclate, illuminant le terrain des sensations."
+    },
+    {
+      "id": "a8b9a787-c667-43df-9ec4-5231cd92ac7d",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 3,
+      "kind": "BOON",
+      "roll": 20,
+      "title": "Éclat de Lumière",
+      "instructions": "Augmentez la percussivité par 2. Faites vibrer les notes éthérées.",
+      "constraints": [
+        "Résonance ascendante",
+        "Harmonie cristalline",
+        "Tonalité lyrique"
+      ],
+      "description": "Un rayon de lumière éclate, illuminant le chemin."
+    },
+    {
+      "id": "e03e427d-18ff-43f2-9019-2678c5a6365e",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 4,
+      "kind": "MUTATION",
+      "roll": 2,
+      "title": "Morphose le son en une éclatante métamorphose",
+      "instructions": "Créez un nouveau timbre, effaçant tout souvenir du précédent.",
+      "constraints": [
+        "Augmentez l'expressivité par accords dissonants",
+        "Modifiez la texture en ajoutant des fréquences aigües",
+        "Renforcez la spatialité avec des échos"
+      ],
+      "description": "Le patch se métamorphose, dévoilant une nouvelle identité sonore. Les sons se recomposent, tels des tessons de verre qui se reformulent."
+    },
+    {
+      "id": "a15443aa-1ed8-4a52-b5aa-f67f59dfe514",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 5,
+      "kind": "MUTATION",
+      "roll": 4,
+      "title": "Métamorphose Éthérée",
+      "instructions": "Permettez à votre esprit s'envoler comme un chant d'oiseau en liberté. Créez une nouvelle harmonie qui fusionne les textures.",
+      "constraints": [
+        "Souplez la structure",
+        "Faites vibrer la matière",
+        "Laissez les sons se mêler"
+      ],
+      "description": "La poésie devient chair, l'instant est suspendu..."
+    },
+    {
+      "id": "91ef72e6-afe5-43c2-99a1-6a2809c88d60",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 6,
+      "kind": "COMPLICATION",
+      "roll": 8,
+      "title": "Recomposition en Finesse",
+      "instructions": "Mélangez les harmonies, réajustez l'orchestration.",
+      "constraints": [
+        "Augmenter la présence aérienne",
+        "Renforcer le mouvement dynamique"
+      ],
+      "description": "L'instant est fragile. L'improvisation s'impose."
+    },
+    {
+      "id": "9eb5fbaa-605b-4f62-a86f-049b3b3f1d1f",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 7,
+      "kind": "OPPORTUNITY",
+      "roll": 14,
+      "title": "La Cadence Éthérée s'Éveille",
+      "instructions": "Laisse vibrer les cordes, ajoute une touche d'harmonie à la texture.",
+      "constraints": [
+        "Évite les notes discordantes",
+        "Maintenez un tempo stable"
+      ],
+      "description": "La lumière des sons se fait plus subtile. Une opportunité s'offre à toi."
+    },
+    {
+      "id": "c0e0bc0d-b09a-47f4-a455-f9af8f2fec9c",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 8,
+      "kind": "MUTATION",
+      "roll": 2,
+      "title": "Mettre à l'Epreuve les Harmonies",
+      "instructions": "Rééquilibrez la tension et la résonance. Trouvez un équilibre entre le chaos et la stabilité.",
+      "constraints": [
+        "Ajustez le percussivité",
+        "Éloignez-vous de l'instabilité dynamique",
+        "Trouvez une nouvelle voix"
+      ],
+      "description": "Le champ des possibilités s'élargit, les contours se défont. La musique devient une force qui vous emporte."
+    },
+    {
+      "id": "36be78ad-1d27-4fd7-a63f-1f61ecc1dd60",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 9,
+      "kind": "COMPLICATION",
+      "roll": 10,
+      "title": "La Noces de l’Inconsistance",
+      "instructions": "Laissez vos instruments se déchirer en éclats de tonnerre. Laissez les rythmes s'effondrer sur le sol. Reconfigurez votre patch pour que chaque note puisse s'égarer sans cesse.",
+      "constraints": [
+        "Faites retentir une basse sourde qui frissonne la salle",
+        "Laissez une voix aiguë déchirer les cordes",
+        "Trouvez le rythme qui fait vaciller tout l'assemblage"
+      ],
+      "description": "Les notes s'éteignent, puis se rallument, comme un souffle de vie mourant. La musique agonise et se ressuscite à chaque instant."
+    },
+    {
+      "id": "682c5756-2e03-41e3-b42e-1d64160acd2f",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "turn": 10,
+      "kind": "COMPLICATION",
+      "roll": 7,
+      "title": "Réadaptation Rythmique",
+      "instructions": "Le rythme doit se dérober en une cascade d'images sonores. Le chaos s'emparera du patch, créant un monde en constante mutation.",
+      "constraints": [
+        "La stabilité ne peut pas être modifiée.",
+        "Le niveau de percussion doit augmenter.",
+        "L'expressivité n'est plus un facteur."
+      ],
+      "description": "Les notes commencent à s'éloigner, comme si elles se déglaçaient d'une glace éphémère. La musique entre dans une nouvelle phase de création."
+    },
+    {
+      "id": "983c26e8-d628-4e18-8213-0812429c5dd4",
+      "sessionId": "f30c6189-349a-401e-a911-1f194f86f799",
+      "turn": 1,
+      "kind": "OPPORTUNITY",
+      "roll": 16,
+      "title": "Résoudre les Fractures de Bruit",
+      "instructions": "Incrustez des nuances sonores entre les fractures pour créer un espace de résonance.",
+      "constraints": [
+        "Synchronisez les fréquences d’ondes éphémères",
+        "Introduisez des notes discordantes sans heurts"
+      ],
+      "description": "La musique se brise et se reforme, comme un reflet dans l’eau tumultueuse."
+    }
+  ],
+  "preludes": [
+    {
+      "id": "a1764d07-6108-492b-b818-028b6abba4dc",
+      "sessionId": "48f9487b-2c7d-4ed3-94ae-5d05188e45cb",
+      "title": "L'Éveil du Kairos",
+      "invitation": "Laissez le silence être votre guide, laissez votre esprit se libérer.",
+      "scene": "Les machines s'éveillent dans un océan de lumière irisée, les rythmes des circuits se mêlent à la brise.",
+      "lore": "Kairos, Poésie Éthérée, maître de l'Ephemeralité et de l'Instabilité Dynamique. Ses traits évoquent les ondes qui naissent du chaos, se défont en fragments d'éphémère beauté.",
+      "tone": "Ethereal, Fragile, Immuable"
+    },
+    {
+      "id": "1e676dc1-8919-4174-9e9c-e3fcdb09a6e2",
+      "sessionId": "3bb16fdb-0bba-48a3-bd3d-dcbc2938ac69",
+      "title": "La Nuit qui Éveille les Machines",
+      "invitation": "Que la musique s'égaye, que les rythmes se réveillent.",
+      "scene": "Les machines sommeillantes dans l'obscurité, elles commencent à trembler, à vibrer.",
+      "lore": "Kairos, avec sa poésie éthérée, guide la dynamique instable de la création, où l'Ephémère et le Changeant se télescopent. La densité de ses sons enveloppe tout comme un rideau d'ombre.",
+      "tone": "Mélancolie,Euphorie,Ténacité"
+    },
+    {
+      "id": "6c13a16f-c949-4f97-bd2e-36a5a1f99b18",
+      "sessionId": "f30c6189-349a-401e-a911-1f194f86f799",
+      "title": "Astrum Fugax",
+      "invitation": "Les sons s'agencent comme les étoiles dans le ciel, nous invitons votre créativité à se réveiller.",
+      "scene": "Dans la vallée de l'écho, les machines grondent et s'éveillent en résonance.",
+      "lore": "L'Astrum Fugax est un poète sonore qui navigue entre l'Éclat Silencieux et les Ondes Éphémères. Ses Fractures de Bruit éclairent le chemin dans un univers où la Percussivité et l'Expressivité sont les pilotes de l'univers.",
+      "tone": "Mystère, Rêve, Liberté"
+    }
+  ]
+}

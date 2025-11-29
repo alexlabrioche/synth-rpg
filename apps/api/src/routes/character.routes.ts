@@ -1,31 +1,26 @@
 import type { FastifyInstance } from "fastify";
-import { CAPABILITY_ICONS } from "@synth-rpg/specs";
-import type { CapabilityIconId } from "@synth-rpg/types";
+import { CAPABILITY_CATALOG } from "@synth-rpg/specs";
+import type { CapabilityId, Lang } from "@synth-rpg/types";
 import { generateCharacter } from "../services/character.service";
 
 export async function characterRoutes(fastify: FastifyInstance) {
   fastify.get("/characters-specs", async () => {
-    return {
-      icons: CAPABILITY_ICONS,
-    };
+    return { icons: CAPABILITY_CATALOG };
   });
 
   fastify.post<{
-    Body: { capabilityIconIds: CapabilityIconId[] };
+    Body: { capabilities: CapabilityId[]; lang?: Lang };
   }>("/create-character", async (request, reply) => {
-    const { capabilityIconIds } = request.body;
+    const { capabilities, lang = "en" } = request.body;
 
-    if (!Array.isArray(capabilityIconIds) || capabilityIconIds.length === 0) {
+    if (!Array.isArray(capabilities) || capabilities.length === 0) {
       return reply
         .code(400)
-        .send({ error: "capabilityIconIds must be a non-empty array" });
+        .send({ error: "capabilities must be a non-empty array" });
     }
 
     try {
-      const character = await generateCharacter(
-        { capabilityIconIds },
-        (msg, meta) => request.log.info(meta ?? {}, msg)
-      );
+      const character = await generateCharacter({ capabilities, lang });
       return character;
     } catch (err: any) {
       request.log.error(

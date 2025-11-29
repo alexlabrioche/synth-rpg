@@ -1,83 +1,48 @@
-import { randomUUID } from "crypto";
-import { CAPABILITY_ICONS } from "@synth-rpg/specs";
-import type {
-  CapabilityIconId,
-  Character,
-  CharacterStats,
-} from "@synth-rpg/types";
+import { CAPABILITY_ARRAY, CAPABILITY_TRANSLATIONS } from "@synth-rpg/specs";
+import type { CapabilityId, Character, Lang } from "@synth-rpg/types";
 import { callCharacterModel } from "../llm/character.model";
-import { rollDie } from "../utils/roll-die";
+import { getSystemPrompt, getUserPrompt } from "../llm/character.prompts";
 import {
-  getStatsLines,
-  getSystemPrompt,
-  getUserPrompt,
-} from "../llm/character.prompts";
-
-export function deriveStatsFromCapabilities(
-  ids: CapabilityIconId[]
-): CharacterStats {
-  const base: CharacterStats = {
-    complexity: 0,
-    chaos: 0,
-    discipline: 0,
-    percussiveness: 0,
-    expressivity: 0,
-    spatiality: 0,
-  };
-
-  ids.forEach((id) => {
-    if (id.includes("OSC")) base.complexity += 2;
-    if (id.includes("RANDOM")) base.chaos += 3;
-    if (id.includes("SEQUENCER")) {
-      base.discipline += 2;
-      base.percussiveness += 1;
-    }
-    if (id.includes("GRANULAR") || id.includes("DELAY")) base.spatiality += 2;
-    if (id.includes("ENVELOPE") || id.includes("LFO")) base.expressivity += 1;
-  });
-
-  const clamp = (n: number) => Math.max(0, Math.min(10, n));
-
-  return {
-    complexity: clamp(base.complexity),
-    chaos: clamp(base.chaos),
-    discipline: clamp(base.discipline),
-    percussiveness: clamp(base.percussiveness),
-    expressivity: clamp(base.expressivity),
-    spatiality: clamp(base.spatiality),
-  };
-}
+  applyInitialVariance,
+  deriveBaseStats,
+} from "../helpers/character.helpers";
+import { characterRepo } from "../repo/memory.repo";
 
 interface GenerateCharacterInput {
-  capabilityIconIds: CapabilityIconId[];
+  capabilities: CapabilityId[];
+  lang: Lang;
 }
 
 export async function generateCharacter(
-  input: GenerateCharacterInput,
-  log: (msg: string, meta?: unknown) => void = () => {}
+  input: GenerateCharacterInput
 ): Promise<Character> {
-  const { capabilityIconIds } = input;
+  const baseStats = deriveBaseStats(input.capabilities);
+  const stats = applyInitialVariance(baseStats);
 
-  const roll = rollDie();
-  const stats = deriveStatsFromCapabilities(capabilityIconIds);
+  const dictionary =
+    CAPABILITY_TRANSLATIONS[input.lang] ?? CAPABILITY_TRANSLATIONS.en;
 
-  const capabilityIconSummaries = CAPABILITY_ICONS.filter((icon) =>
-    capabilityIconIds.includes(icon.id)
-  ).map((icon) => ({
-    id: icon.id,
-    label: icon.label,
-    description: icon.description,
-  }));
+  const capabilities = CAPABILITY_ARRAY.filter((icon) =>
+    input.capabilities.includes(icon.id)
+  );
 
-  const capabilityLines = capabilityIconSummaries
-    .map((c) => `- ${c.label}: ${c.description}`)
+  const capabilitySummaries = capabilities
+    .map((capability) => {
+      const translation = dictionary[capability.slug];
+      const label = translation?.label ?? capability.slug;
+      const description =
+        translation?.description ?? capability.description ?? "";
+      const descriptionPart = description ? `: ${description}` : "";
+      return `- ${label}${descriptionPart}`;
+    })
     .join("\n");
 
-  const systemPrompt = getSystemPrompt();
-  const statsLines = getStatsLines(stats);
-  const userPrompt = getUserPrompt(capabilityLines, statsLines, roll);
-
-  log("Calling character model", { roll, stats, capabilityIconIds });
+  const systemPrompt = getSystemPrompt({ lang: input.lang });
+  const userPrompt = getUserPrompt({
+    capabilitySummaries: capabilitySummaries,
+    stats,
+    lang: input.lang,
+  });
 
   const llmOutput = await callCharacterModel({
     systemPrompt,
@@ -85,15 +50,14 @@ export async function generateCharacter(
   });
 
   const character: Character = {
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     name: llmOutput.name,
     archetype: llmOutput.archetype,
     traits: llmOutput.traits,
     stats,
-    capabilityIconIds,
-    originRolls: [{ sides: 20, value: roll }],
     description: llmOutput.description,
+    capabilities,
   };
 
-  return character;
+  return characterRepo.save(character);
 }

@@ -1,0 +1,404 @@
+{
+  "capabilities": {
+    "attenuator": {
+      "label": "Attenuator",
+      "description": "Scales audio or CV levels down for tidy gain staging or subtle modulation depths."
+    },
+    "bias-voltage": {
+      "label": "Bias Voltage",
+      "description": "Provides a steady DC offset that shifts other control voltages into the sweet spot."
+    },
+    "chorus": {
+      "label": "Chorus",
+      "description": "Multi-voice modulated delay that thickens pads and leads with silky detuning."
+    },
+    "clipper": {
+      "label": "Clipper",
+      "description": "Hard-limits peaks to add grit, distortion, or safety to loud sources."
+    },
+    "clock-divider": {
+      "label": "Clock Divider",
+      "description": "Derives slower, phase-aligned pulses by dividing the master clock."
+    },
+    "clock-multiplier": {
+      "label": "Clock Multiplier",
+      "description": "Multiplies an incoming clock to create faster subdivisions and ratchets."
+    },
+    "comparator": {
+      "label": "Comparator",
+      "description": "Emits a gate whenever an input CV crosses a voltage threshold."
+    },
+    "crossfader": {
+      "label": "Crossfader",
+      "description": "Blends two sources with manual or CV control over the fade curve."
+    },
+    "cv-attenuator": {
+      "label": "CV Attenuator",
+      "description": "Trim control voltages before they hit sensitive destinations."
+    },
+    "cv-attenuverter": {
+      "label": "CV Attenuverter",
+      "description": "Bipolar level control that both scales and inverts control voltages."
+    },
+    "cv-inverter": {
+      "label": "CV Inverter",
+      "description": "Outputs the negative version of any control signal for mirror-image modulation."
+    },
+    "cv-matrix-mixer": {
+      "label": "CV Matrix Mixer",
+      "description": "Four-by-four style matrix that routes multiple CV sources to multiple destinations."
+    },
+    "cv-mixer": {
+      "label": "CV Mixer",
+      "description": "Simple summing mixer for combining modulation sources."
+    },
+    "cv-mixer-attenuverting": {
+      "label": "CV Mixer (Attenuverting)",
+      "description": "CV mixer with bipolar knobs so every input can be inverted or boosted."
+    },
+    "cv-mod-generic": {
+      "label": "CV Mod Utility",
+      "description": "General-purpose modulation block for offsets, scaling, or routing tricks."
+    },
+    "cv-recorder": {
+      "label": "CV Recorder",
+      "description": "Captures CV gestures in real time and loops them back as automation."
+    },
+    "cv-rectifier-full": {
+      "label": "CV Rectifier (Full)",
+      "description": "Folds negative CV up into positive values, doubling the modulation frequency."
+    },
+    "cv-rectifier-half": {
+      "label": "CV Rectifier (Half)",
+      "description": "Blocks the negative half of a CV, yielding unipolar modulation."
+    },
+    "cv-switch": {
+      "label": "CV Switch",
+      "description": "Voltage-controlled switch for routing CV lanes or selecting modulation sources."
+    },
+    "cv-utility-mixer": {
+      "label": "CV Utility Mixer",
+      "description": "Precision mixer with offsets ideal for pitch CV summing and transposition."
+    },
+    "delay": {
+      "label": "Delay",
+      "description": "Flexible delay line for slapbacks, dub repeats, or washed-out ambience."
+    },
+    "env-ad": {
+      "label": "AD Envelope",
+      "description": "Two-stage attack/decay contour for percussive hits."
+    },
+    "env-ad-loop": {
+      "label": "AD Envelope (Looping)",
+      "description": "Looping AD envelope that turns into a simple unipolar LFO."
+    },
+    "env-adsr": {
+      "label": "ADSR Envelope",
+      "description": "Classic attack-decay-sustain-release generator responsive to gate length."
+    },
+    "env-adsr-loop": {
+      "label": "ADSR Envelope (Looping)",
+      "description": "Self-looping ADSR for evolving rhythmic modulation without gates."
+    },
+    "env-ahdsr": {
+      "label": "AHDSR Envelope",
+      "description": "Adds a hold stage for organ-style swells and long pads."
+    },
+    "env-ahdsr-loop": {
+      "label": "AHDSR Envelope (Looping)",
+      "description": "Looping AHDSR delivering complex five-stage modulation cycles."
+    },
+    "env-ar": {
+      "label": "AR Envelope",
+      "description": "Simple attack/release contour suited for drones and amplitude shaping."
+    },
+    "env-ar-loop": {
+      "label": "AR Envelope (Looping)",
+      "description": "Looping AR envelope that behaves like a ramp LFO."
+    },
+    "env-dadsr-loop": {
+      "label": "DADSR Envelope (Looping)",
+      "description": "Cycling envelope with delay plus ADSR for staggered modulations."
+    },
+    "env-dasdr": {
+      "label": "DASDR Envelope",
+      "description": "Delay–attack–sustain–decay–release contour for intricate percussion phrasing."
+    },
+    "envelope-follower": {
+      "label": "Envelope Follower",
+      "description": "Turns audio amplitude into CV for ducking, tremolo, or dynamics tracking."
+    },
+    "gate-delay": {
+      "label": "Gate Delay",
+      "description": "Offsets gates or triggers by a programmable time before passing them on."
+    },
+    "granular-synth": {
+      "label": "Granular Synth",
+      "description": "Grain engine that scrubs through buffers to stretch, freeze, and cloud sounds."
+    },
+    "inverter": {
+      "label": "Inverter",
+      "description": "Flips an audio signal 180° to fight phase build-up or create negative mixes."
+    },
+    "keyboard-ctrl": {
+      "label": "Keyboard Controller",
+      "description": "Generates pitch CV, gates, velocity, and mod outputs from a keyboard."
+    },
+    "lfo-bpm-saw": {
+      "label": "BPM LFO (Saw)",
+      "description": "Tempo-synced saw LFO for rising ramps locked to the clock."
+    },
+    "lfo-bpm-sine": {
+      "label": "BPM LFO (Sine)",
+      "description": "Smooth sine LFO that follows the transport BPM."
+    },
+    "lfo-bpm-square": {
+      "label": "BPM LFO (Square)",
+      "description": "Clocked square LFO for choppy tremolo and rhythmic gating."
+    },
+    "lfo-bpm-triangle": {
+      "label": "BPM LFO (Triangle)",
+      "description": "Tempo-locked triangle LFO delivering even rises and falls."
+    },
+    "lfo-reset-sync": {
+      "label": "LFO Reset Sync",
+      "description": "Resets any free-running LFO to phase zero using triggers or clocks."
+    },
+    "lfo-saw": {
+      "label": "LFO (Saw)",
+      "description": "Free-running sawtooth LFO for exponential risers or drop-offs."
+    },
+    "lfo-sine": {
+      "label": "LFO (Sine)",
+      "description": "Classic sine LFO for smooth vibrato, PWM, or filter sweeps."
+    },
+    "lfo-square": {
+      "label": "LFO (Square)",
+      "description": "Binary square LFO ideal for trills, chops, and clock-style modulation."
+    },
+    "lfo-triangle": {
+      "label": "LFO (Triangle)",
+      "description": "Linear triangle LFO for even cyclical movement."
+    },
+    "logic-and": {
+      "label": "Logic AND",
+      "description": "Outputs high only when every input gate is high."
+    },
+    "logic-nand": {
+      "label": "Logic NAND",
+      "description": "The inverse of AND—high whenever at least one input is low."
+    },
+    "logic-nor": {
+      "label": "Logic NOR",
+      "description": "Outputs a high gate only when all inputs are low."
+    },
+    "logic-not": {
+      "label": "Logic NOT",
+      "description": "Simple inverter for gates and triggers."
+    },
+    "logic-or": {
+      "label": "Logic OR",
+      "description": "Outputs high when any input gate is high."
+    },
+    "logic-xnor": {
+      "label": "Logic XNOR",
+      "description": "Exclusive NOR: high when inputs share the same state."
+    },
+    "logic-xor": {
+      "label": "Logic XOR",
+      "description": "Exclusive OR: high when exactly one input is high."
+    },
+    "lpg": {
+      "label": "Low-pass Gate",
+      "description": "Combines VCA and VCF behavior for organic vactrol plucks."
+    },
+    "master-clock": {
+      "label": "Master Clock",
+      "description": "Primary clock source with tempo, swing, and reset control for the whole system."
+    },
+    "microphone-input": {
+      "label": "Microphone Input",
+      "description": "Mic preamp with gain to bring external vocals or instruments into the rack."
+    },
+    "mixer": {
+      "label": "Audio Mixer",
+      "description": "Multi-channel audio mixer with level knobs for balancing voices."
+    },
+    "mixer-inverting": {
+      "label": "Inverting Mixer",
+      "description": "Audio mixer with polarity inversion for phase tricks and feedback control."
+    },
+    "noise": {
+      "label": "Noise Generator",
+      "description": "White/pink noise source for percussion, wind, or modulation duties."
+    },
+    "phase-shifter": {
+      "label": "Phase Shifter",
+      "description": "Modulated all-pass network that sweeps notches for classic phaser tones."
+    },
+    "physical-mod-generic": {
+      "label": "Physical Modeling (Generic)",
+      "description": "General resonant model for mallets, hits, or abstract materials."
+    },
+    "physical-mod-membrane": {
+      "label": "Physical Modeling (Membrane)",
+      "description": "Membrane resonator suited for drums, toms, and stretched skins."
+    },
+    "physical-mod-pipe": {
+      "label": "Physical Modeling (Pipe)",
+      "description": "Pipe and tube resonator evoking flutes, organs, and metallic chimneys."
+    },
+    "physical-mod-string": {
+      "label": "Physical Modeling (String)",
+      "description": "String resonator for plucks, bows, and resonant drones."
+    },
+    "precision-adder": {
+      "label": "Precision Adder",
+      "description": "Precision adder that sums pitch CV while keeping 1V/oct accuracy."
+    },
+    "quantizer": {
+      "label": "Quantizer",
+      "description": "Snaps incoming CV to musical scales, chords, or microtonal sets."
+    },
+    "random-smooth": {
+      "label": "Random (Smooth)",
+      "description": "Generates slowly fluctuating random voltages for wandering modulations."
+    },
+    "random-stepped": {
+      "label": "Random (Stepped)",
+      "description": "Outputs quantized random steps at each clock pulse."
+    },
+    "rectifier-full": {
+      "label": "Rectifier (Full)",
+      "description": "Full-wave rectifier for audio: replaces negative polarity with positive."
+    },
+    "rectifier-half": {
+      "label": "Rectifier (Half)",
+      "description": "Half-wave rectifier that mutes either the positive or negative lobe."
+    },
+    "resonator": {
+      "label": "Resonator",
+      "description": "Tunable resonant body for Karplus or sympathetic ringing tones."
+    },
+    "reverb": {
+      "label": "Reverb",
+      "description": "Room, hall, and plate style reverberation for spatial depth."
+    },
+    "ringmod": {
+      "label": "Ring Modulator",
+      "description": "Multiplies two signals to create inharmonic sidebands."
+    },
+    "sample-and-hold": {
+      "label": "Sample & Hold",
+      "description": "Samples an input at trigger time and holds the value until the next pulse."
+    },
+    "sample-player": {
+      "label": "Sample Player",
+      "description": "Plays back loaded audio files with CV control over pitch and position."
+    },
+    "sample-rec": {
+      "label": "Sample Recorder",
+      "description": "Captures incoming audio to buffers for later playback or mangling."
+    },
+    "seq-cv-gate": {
+      "label": "CV/Gate Sequencer",
+      "description": "Programmable sequence lanes for pitch CV and gate patterns."
+    },
+    "slew-limiter": {
+      "label": "Slew Limiter",
+      "description": "Glides between voltages at a set rate for portamento or smoothing."
+    },
+    "speech-synthesis": {
+      "label": "Speech Synthesis",
+      "description": "Formant-based speech synthesizer for robotic or spoken textures."
+    },
+    "switch": {
+      "label": "Audio Switch",
+      "description": "Voltage-controlled switch for selecting between audio paths."
+    },
+    "touch-ctrl": {
+      "label": "Touch Controller",
+      "description": "Capacitive touch plate that outputs CV and gates from finger gestures."
+    },
+    "trigger-pattern-generator": {
+      "label": "Trigger Pattern Generator",
+      "description": "Algorithmic engine that spits evolving trigger rhythms."
+    },
+    "vca": {
+      "label": "VCA",
+      "description": "Voltage controlled amplifier for shaping amplitude or modulation depth."
+    },
+    "vca-dc": {
+      "label": "DC-Coupled VCA",
+      "description": "VCA that passes DC, perfect for CV level control."
+    },
+    "vcf-bandpass": {
+      "label": "VCF Band-pass",
+      "description": "State-variable filter passing only a focused band of frequencies."
+    },
+    "vcf-comb": {
+      "label": "VCF Comb",
+      "description": "Resonant delay-line filter for flanging, Karplus, and metallic tones."
+    },
+    "vcf-highpass": {
+      "label": "VCF High-pass",
+      "description": "Removes low frequencies while animated by cutoff CV."
+    },
+    "vcf-highpass-res": {
+      "label": "VCF High-pass (Resonant)",
+      "description": "High-pass filter with controllable resonance for acidic sweeps."
+    },
+    "vcf-lowpass": {
+      "label": "VCF Low-pass",
+      "description": "Smooth low-pass filter for subtractive sculpting."
+    },
+    "vcf-lowpass-res": {
+      "label": "VCF Low-pass (Resonant)",
+      "description": "Low-pass with variable resonance for squelchy bass and leads."
+    },
+    "vcf-notch": {
+      "label": "VCF Notch",
+      "description": "Twin-notch or band-reject filter great for phasing effects."
+    },
+    "vco-pwm": {
+      "label": "VCO PWM",
+      "description": "Voltage-controlled oscillator with pulse-width modulation for animated squares."
+    },
+    "vco-ramp": {
+      "label": "VCO Ramp",
+      "description": "Saw/up-ramp oscillator with sync and FM inputs."
+    },
+    "vco-saw": {
+      "label": "VCO Saw",
+      "description": "Classic sawtooth oscillator rich in harmonics."
+    },
+    "vco-sine": {
+      "label": "VCO Sine",
+      "description": "Pure sine oscillator for FM, subs, and percussion."
+    },
+    "vco-square": {
+      "label": "VCO Square",
+      "description": "Square oscillator with perfect odd harmonics and hard sync."
+    },
+    "vco-triangle": {
+      "label": "VCO Triangle",
+      "description": "Triangle-core oscillator for mellow, low-harmonic tones."
+    },
+    "vco-wavetable": {
+      "label": "VCO Wavetable",
+      "description": "Sweeps through stored waveforms under CV for evolving timbres."
+    },
+    "voltage-slider": {
+      "label": "Voltage Slider",
+      "description": "Manual CV fader for performance gestures and offsets."
+    },
+    "wavefolder": {
+      "label": "Wavefolder",
+      "description": "Adds harmonics by folding a waveform back onto itself."
+    },
+    "waveshaper": {
+      "label": "Waveshaper",
+      "description": "Nonlinear processor that remaps waves for distortion and dynamics control."
+    }
+  }
+}

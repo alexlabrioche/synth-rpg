@@ -1,0 +1,404 @@
+{
+  "capabilities": {
+    "attenuator": {
+      "label": "Atténuateur",
+      "description": "Atténue un signal audio ou CV pour garder un gain propre et doser finement la profondeur de modulation."
+    },
+    "bias-voltage": {
+      "label": "Tension de bias",
+      "description": "Fournit un offset DC stable pour repositionner d'autres CV dans la zone utile."
+    },
+    "chorus": {
+      "label": "Chorus",
+      "description": "Delay modulé multi-voix qui épaissit pads et leads avec un léger detuning."
+    },
+    "clipper": {
+      "label": "Clipper",
+      "description": "Écrête brutalement les crêtes pour ajouter du grain ou protéger un signal trop fort."
+    },
+    "clock-divider": {
+      "label": "Diviseur de clock",
+      "description": "Produit des pulses plus lents en divisant la clock maître sans dérive de phase."
+    },
+    "clock-multiplier": {
+      "label": "Multiplicateur de clock",
+      "description": "Multiplie une clock entrante pour générer des subdivisions rapides et des ratchets."
+    },
+    "comparator": {
+      "label": "Comparateur",
+      "description": "Émet un gate dès qu'un CV franchit le seuil défini."
+    },
+    "crossfader": {
+      "label": "Crossfader",
+      "description": "Mélange deux sources avec une courbe contrôlable à la main ou en CV."
+    },
+    "cv-attenuator": {
+      "label": "Atténuateur CV",
+      "description": "Permet d'atténuer un CV avant qu'il n'attaque une destination sensible."
+    },
+    "cv-attenuverter": {
+      "label": "Atténuverteur CV",
+      "description": "Règle un CV en positif ou négatif pour ajuster amplitude et polarité d'un seul geste."
+    },
+    "cv-inverter": {
+      "label": "Inverseur CV",
+      "description": "Produit la version inversée d'un CV pour créer des modulations en miroir."
+    },
+    "cv-matrix-mixer": {
+      "label": "Matrix mixer CV",
+      "description": "Distribue plusieurs sources CV vers plusieurs destinations avec gains indépendants."
+    },
+    "cv-mixer": {
+      "label": "Mixer CV",
+      "description": "Additionne plusieurs modulations dans un seul bus de contrôle."
+    },
+    "cv-mixer-attenuverting": {
+      "label": "Mixer CV attenuverting",
+      "description": "Mixer CV avec potentiomètres bipolaires pour inverser ou amplifier chaque entrée."
+    },
+    "cv-mod-generic": {
+      "label": "Utilitaire CV Mod",
+      "description": "Bloc polyvalent pour offsets, scaling ou routages créatifs de modulation."
+    },
+    "cv-recorder": {
+      "label": "Recorder CV",
+      "description": "Enregistre des gestes CV en temps réel et les rejoue en boucle comme une automation."
+    },
+    "cv-rectifier-full": {
+      "label": "Redresseur CV (full)",
+      "description": "Rabats la partie négative d'un CV vers le positif pour doubler la fréquence de modulation."
+    },
+    "cv-rectifier-half": {
+      "label": "Redresseur CV (half)",
+      "description": "Supprime la portion négative d'un CV pour obtenir une modulation strictement positive."
+    },
+    "cv-switch": {
+      "label": "Switch CV",
+      "description": "Bascule CV commandée qui route ou sélectionne différentes modulations."
+    },
+    "cv-utility-mixer": {
+      "label": "Mixer utilitaire CV",
+      "description": "Mixer de précision avec offset parfait pour additionner ou transposer des CV de pitch."
+    },
+    "delay": {
+      "label": "Delay",
+      "description": "Ligne de delay polyvalente, du slapback serré aux nappes ambient noyées."
+    },
+    "env-ad": {
+      "label": "Enveloppe AD",
+      "description": "Enveloppe attaque/décay rapide idéale pour percussions et accentuations."
+    },
+    "env-ad-loop": {
+      "label": "Enveloppe AD (loop)",
+      "description": "Version bouclée de l'enveloppe AD pour générer un LFO unipolaire simple."
+    },
+    "env-adsr": {
+      "label": "Enveloppe ADSR",
+      "description": "Générateur classique attaque, decay, sustain, release piloté par la durée du gate."
+    },
+    "env-adsr-loop": {
+      "label": "Enveloppe ADSR (loop)",
+      "description": "Boucle automatiquement pour créer des modulations rythmiques sans gate externe."
+    },
+    "env-ahdsr": {
+      "label": "Enveloppe AHDSR",
+      "description": "Ajoute un temps de hold pour des nappes et swells façon orgue."
+    },
+    "env-ahdsr-loop": {
+      "label": "Enveloppe AHDSR (loop)",
+      "description": "La version loopée déroule en continu un cycle AHDSR sophistiqué."
+    },
+    "env-ar": {
+      "label": "Enveloppe AR",
+      "description": "Enveloppe attaque/relâche idéale pour sculpter drones et transitions douces."
+    },
+    "env-ar-loop": {
+      "label": "Enveloppe AR (loop)",
+      "description": "Boucle une enveloppe AR et se comporte comme un LFO en rampe."
+    },
+    "env-dadsr-loop": {
+      "label": "Enveloppe DADSR (loop)",
+      "description": "Ajoute un délai avant un cycle ADSR bouclé pour des modulations décalées."
+    },
+    "env-dasdr": {
+      "label": "Enveloppe DASDR",
+      "description": "Enveloppe delay, attack, sustain, decay, release pour des phrases percussives complexes."
+    },
+    "envelope-follower": {
+      "label": "Envelope follower",
+      "description": "Transforme l'amplitude audio en CV pour du ducking, du tremolo ou du tracking dynamique."
+    },
+    "gate-delay": {
+      "label": "Gate delay",
+      "description": "Retarde gates et triggers d'un temps réglable avant de les relayer."
+    },
+    "granular-synth": {
+      "label": "Granular synth",
+      "description": "Moteur granulaire qui parcourt des buffers pour étirer, figer ou transformer les sons en nuages."
+    },
+    "inverter": {
+      "label": "Inverseur audio",
+      "description": "Inverse la polarité d'un signal audio pour corriger la phase ou créer des mix négatifs."
+    },
+    "keyboard-ctrl": {
+      "label": "Contrôleur clavier",
+      "description": "Fournit CV de pitch, gates, vélocité et modulations issus d'un clavier."
+    },
+    "lfo-bpm-saw": {
+      "label": "LFO BPM (saw)",
+      "description": "LFO en dents de scie asservi à la clock pour des rampes calées sur le tempo."
+    },
+    "lfo-bpm-sine": {
+      "label": "LFO BPM (sine)",
+      "description": "LFO sinusoïdal doux verrouillé sur le BPM."
+    },
+    "lfo-bpm-square": {
+      "label": "LFO BPM (square)",
+      "description": "LFO carré synchronisé pour des tremolos carrés et effets de gate rythmiques."
+    },
+    "lfo-bpm-triangle": {
+      "label": "LFO BPM (triangle)",
+      "description": "LFO triangle synchronisé qui assure des montées et descentes régulières."
+    },
+    "lfo-reset-sync": {
+      "label": "Reset sync LFO",
+      "description": "Ré-initialise un LFO libre à la phase zéro via triggers ou clock."
+    },
+    "lfo-saw": {
+      "label": "LFO (saw)",
+      "description": "LFO en dents de scie libre pour des montées ou chutes franches."
+    },
+    "lfo-sine": {
+      "label": "LFO (sine)",
+      "description": "LFO sinusoïdal classique pour vibratos, PWM ou balayages de filtre."
+    },
+    "lfo-square": {
+      "label": "LFO (square)",
+      "description": "LFO carré binaire parfait pour trilles, chops ou modulations type clock."
+    },
+    "lfo-triangle": {
+      "label": "LFO (triangle)",
+      "description": "LFO triangle linéaire pour des évolutions parfaitement régulières."
+    },
+    "logic-and": {
+      "label": "Logique AND",
+      "description": "Sort un gate haut uniquement quand toutes les entrées sont hautes."
+    },
+    "logic-nand": {
+      "label": "Logique NAND",
+      "description": "Inverse du AND, haut tant qu'au moins une entrée reste basse."
+    },
+    "logic-nor": {
+      "label": "Logique NOR",
+      "description": "Produit un gate haut uniquement si toutes les entrées sont basses."
+    },
+    "logic-not": {
+      "label": "Logique NOT",
+      "description": "Inverseur de gates/triggers pour créer des signaux complémentaires."
+    },
+    "logic-or": {
+      "label": "Logique OR",
+      "description": "Sort un gate haut dès qu'au moins une entrée est haute."
+    },
+    "logic-xnor": {
+      "label": "Logique XNOR",
+      "description": "Retourne un gate haut quand les entrées partagent le même état."
+    },
+    "logic-xor": {
+      "label": "Logique XOR",
+      "description": "Sortie haute uniquement lorsqu'une entrée est haute et l'autre basse."
+    },
+    "lpg": {
+      "label": "Low-pass gate",
+      "description": "Mélange VCA et VCF via un vactrol pour des plucks organiques."
+    },
+    "master-clock": {
+      "label": "Master clock",
+      "description": "Source de clock principale avec tempo, swing et reset pour piloter tout le système."
+    },
+    "microphone-input": {
+      "label": "Entrée microphone",
+      "description": "Préampli micro avec gain pour injecter voix ou instruments externes dans le rack."
+    },
+    "mixer": {
+      "label": "Mixer audio",
+      "description": "Mixer multicanal pour équilibrer plusieurs voix audio."
+    },
+    "mixer-inverting": {
+      "label": "Mixer inversant",
+      "description": "Mixer audio capable d'inverser la polarité pour gérer phase et feedback."
+    },
+    "noise": {
+      "label": "Générateur de noise",
+      "description": "Source de noise blanc/rose pour percussions, vent ou modulations aléatoires."
+    },
+    "phase-shifter": {
+      "label": "Phase shifter",
+      "description": "Réseau all-pass modulé qui crée des notch mobiles façon phaser."
+    },
+    "physical-mod-generic": {
+      "label": "Physical modeling (générique)",
+      "description": "Modèle résonant générique pour simuler frappes, objets ou matières abstraites."
+    },
+    "physical-mod-membrane": {
+      "label": "Physical modeling (membrane)",
+      "description": "Modèle de membrane adapté aux peaux tendues, toms et percussions."
+    },
+    "physical-mod-pipe": {
+      "label": "Physical modeling (pipe)",
+      "description": "Résonateur de tubes rappelant flûtes, orgues ou colonnes métalliques."
+    },
+    "physical-mod-string": {
+      "label": "Physical modeling (string)",
+      "description": "Modèle de corde pour pincer, frotter ou soutenir des drones résonants."
+    },
+    "precision-adder": {
+      "label": "Adder de précision",
+      "description": "Additionne des CV de pitch tout en conservant la précision 1V/oct."
+    },
+    "quantizer": {
+      "label": "Quantizer",
+      "description": "Contraint un CV aux gammes, accords ou modes microtonaux choisis."
+    },
+    "random-smooth": {
+      "label": "Random (smooth)",
+      "description": "Produit des variations aléatoires lentes pour des modulations erratiques mais douces."
+    },
+    "random-stepped": {
+      "label": "Random (stepped)",
+      "description": "Génère des marches aléatoires quantifiées à chaque pulse de clock."
+    },
+    "rectifier-full": {
+      "label": "Rectifier (full)",
+      "description": "Redresseur audio full-wave qui remplace la polarité négative par du positif."
+    },
+    "rectifier-half": {
+      "label": "Rectifier (half)",
+      "description": "Redresseur half-wave qui supprime la moitié positive ou négative du signal."
+    },
+    "resonator": {
+      "label": "Resonator",
+      "description": "Corps résonant accordable pour des sonorités karplus ou des résonances sympathiques."
+    },
+    "reverb": {
+      "label": "Reverb",
+      "description": "Réverb numérique ou analogique pour ajouter profondeur et espace."
+    },
+    "ringmod": {
+      "label": "Ring modulator",
+      "description": "Multiplie deux signaux pour générer des sidebands inharmoniques."
+    },
+    "sample-and-hold": {
+      "label": "Sample & hold",
+      "description": "Échantillonne une entrée au trigger puis conserve la valeur jusqu'au pulse suivant."
+    },
+    "sample-player": {
+      "label": "Sample player",
+      "description": "Lit des fichiers audio avec contrôle CV sur pitch et position."
+    },
+    "sample-rec": {
+      "label": "Sample recorder",
+      "description": "Enregistre un flux audio dans un buffer pour le rejouer ou le transformer."
+    },
+    "seq-cv-gate": {
+      "label": "Sequencer CV/Gate",
+      "description": "Séquenceur programmable pour pistes de pitch CV et de gates."
+    },
+    "slew-limiter": {
+      "label": "Slew limiter",
+      "description": "Lisse la transition entre deux CV pour du glide ou pour supprimer des crénelages."
+    },
+    "speech-synthesis": {
+      "label": "Speech synthesis",
+      "description": "Synthèse vocale basée sur des formants pour créer voix robotiques ou phrases parlées."
+    },
+    "switch": {
+      "label": "Switch audio",
+      "description": "Permet de commuter des flux audio sous contrôle manuel ou CV."
+    },
+    "touch-ctrl": {
+      "label": "Contrôleur tactile",
+      "description": "Plaque tactile capacitive qui génère CV et gates selon les gestes."
+    },
+    "trigger-pattern-generator": {
+      "label": "Trigger pattern generator",
+      "description": "Générateur algorithmique produisant des patterns de triggers évolutifs."
+    },
+    "vca": {
+      "label": "VCA",
+      "description": "Amplificateur contrôlé en tension pour sculpter amplitude ou profondeur de modulation."
+    },
+    "vca-dc": {
+      "label": "VCA DC",
+      "description": "VCA à couplage DC pour contrôler précisément le niveau de CV."
+    },
+    "vcf-bandpass": {
+      "label": "VCF band-pass",
+      "description": "Filtre passe-bande contrôlé en tension pour isoler une zone fréquentielle."
+    },
+    "vcf-comb": {
+      "label": "VCF comb",
+      "description": "Filtre peigne résonant pour flanging, karplus ou textures métalliques."
+    },
+    "vcf-highpass": {
+      "label": "VCF high-pass",
+      "description": "Filtre passe-haut contrôlé en tension pour éclaircir un signal."
+    },
+    "vcf-highpass-res": {
+      "label": "VCF high-pass (res)",
+      "description": "Passe-haut résonant pour des balayages acidulés et incisifs."
+    },
+    "vcf-lowpass": {
+      "label": "VCF low-pass",
+      "description": "Filtre passe-bas souple pour la synthèse soustractive."
+    },
+    "vcf-lowpass-res": {
+      "label": "VCF low-pass (res)",
+      "description": "Passe-bas résonant pour basses qui grognent et leads expressifs."
+    },
+    "vcf-notch": {
+      "label": "VCF notch",
+      "description": "Filtre coupe-bande/Notch en tension idéale pour des effets de phaser."
+    },
+    "vco-pwm": {
+      "label": "VCO PWM",
+      "description": "Oscillateur carré avec PWM contrôlée en tension pour des timbres mouvants."
+    },
+    "vco-ramp": {
+      "label": "VCO ramp",
+      "description": "Oscillateur en rampe montante avec synchro et FM."
+    },
+    "vco-saw": {
+      "label": "VCO saw",
+      "description": "Oscillateur en dents de scie classique riche en harmoniques."
+    },
+    "vco-sine": {
+      "label": "VCO sine",
+      "description": "Oscillateur sinusoïdal pur pour FM, subs ou percussions."
+    },
+    "vco-square": {
+      "label": "VCO square",
+      "description": "Oscillateur carré riche en harmoniques impaires, idéal avec hard sync."
+    },
+    "vco-triangle": {
+      "label": "VCO triangle",
+      "description": "Oscillateur triangle doux avec peu d'harmoniques."
+    },
+    "vco-wavetable": {
+      "label": "VCO wavetable",
+      "description": "Balaye des wavetables sous contrôle CV pour des timbres évolutifs."
+    },
+    "voltage-slider": {
+      "label": "Voltage slider",
+      "description": "Fader de CV manuel pour gestes live et offsets précis."
+    },
+    "wavefolder": {
+      "label": "Wavefolder",
+      "description": "Ajoute des harmoniques en repliant la forme d'onde sur elle-même."
+    },
+    "waveshaper": {
+      "label": "Waveshaper",
+      "description": "Traitement non linéaire qui recompose la forme d'onde pour distorsion et contrôle dynamique."
+    }
+  }
+}
