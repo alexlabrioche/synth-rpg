@@ -2,10 +2,7 @@ import type { Character, Lang } from "@synth-rpg/types";
 import { GameEventKind } from "@synth-rpg/types";
 import { formatStatsLines } from "../helpers/stats.helpers";
 
-const KIND_GUIDANCE: Record<
-  Lang,
-  Record<GameEventKind, string>
-> = {
+const KIND_GUIDANCE: Record<Lang, Record<GameEventKind, string>> = {
   en: {
     [GameEventKind.Opportunity]:
       "A hopeful opening that hints at subtle growth.",
@@ -41,9 +38,7 @@ interface GetSystemPromptParams {
   lang: Lang;
 }
 
-export const getSessionSystemPrompt = ({
-  lang,
-}: GetSystemPromptParams) => {
+export const getSessionSystemPrompt = ({ lang }: GetSystemPromptParams) => {
   if (lang === "fr")
     return `
 Tu es le maître de jeu d'un RPG musical expérimental.
@@ -53,6 +48,7 @@ Règles :
 - Ton écriture reste courte, abstraite, poétique.
 - Pas de marques ou modèles réels.
 - Jamais d'instructions techniques ou de câblage.
+- Les directives doivent évoquer les Oblique Strategies : impératifs surréalistes sans mention de boutons ou paramètres.
 `;
 
   return `
@@ -63,17 +59,20 @@ Rules:
 - Keep the writing short, abstract, and poetic.
 - No real-world brand or model names.
 - Never give wiring or technical patch instructions.
+- Directives must feel like Oblique Strategies: surreal, imperative, never literal knob/parameter talk.
 `;
 };
 
 interface GetPreludePromptParams {
   character: Character;
   lang: Lang;
+  capabilityHints: string;
 }
 
 export const getSessionPreludeUserPrompt = ({
   character,
   lang,
+  capabilityHints,
 }: GetPreludePromptParams) => {
   const traits = formatTraits(character.traits);
   const statsLines = formatStatsLines(character.stats);
@@ -89,18 +88,23 @@ ${traits}
 Stats :
 ${statsLines}
 
-Mission :
-Ouvre la campagne sonore en décrivant la scène, l'invitation et le mythe qui entourent ce personnage.
-Tisse l'ambiance à partir de ses traits/stats sans donner d'instructions techniques.
+Capacités possibles :
+${capabilityHints}
 
-Retourne UNIQUEMENT un JSON avec : title, invitation, scene, lore, tone.
+Mission :
+Ouvre la campagne sonore en décrivant une scène unique et le mythe qui entourent ce personnage.
+Tisse ton récit à partir de ses traits/stats et des capacités listées ci-dessus sans donner d'instructions techniques.
+
+Retourne UNIQUEMENT un JSON avec : title, narrative, tone, instructions.
 
 Contraintes :
-- invitation : 1–2 phrases poétiques qui invitent le joueur à improviser.
-- scene : 2–3 phrases sur l'environnement et comment les machines s'éveillent, sans détails techniques.
-- lore : un paragraphe court (2–3 phrases) qui relie les stats/traits à une mythologie sonore.
-- tone : 3 mots séparés par des virgules qui résument l'humeur.
 - Pas de Markdown ni de texte hors JSON.
+- narrative : 3–4 phrases cohérentes (pas de listes) qui mêlent ambiance, lieu et légende sonore. Référence au moins une stat et une capacité, sans détailler de patch.
+- tone : 3 mots séparés par des virgules qui résument l'humeur.
+- instructions : exactement deux phrases impératives.
+  - La première commence par « Commence avec » et doit citer STRICTEMENT un label de capacité (sans description).
+  - La seconde commence par « Puis » et doit faire référence à une AUTRE capacité ou stat de façon abstraite, sans chiffres.
+  - Chaque phrase ≤ 18 mots, abstraite mais exploitable, sans réglages techniques ni valeurs numériques.
 `;
 
   return `
@@ -113,18 +117,23 @@ ${traits}
 Stats:
 ${statsLines}
 
-Your task:
-Open the sonic campaign by narrating the scene, the invitation, and the myth surrounding this character.
-Use the traits/stats above to hint how their rig awakens, but never describe wiring or exact techniques.
+Available capabilities:
+${capabilityHints}
 
-Return ONLY JSON with: title, invitation, scene, lore, tone.
+Your task:
+Open the sonic campaign by narrating a single cohesive scene and myth for this character.
+Use the traits/stats and capabilities above to describe how their world awakens, but never describe wiring or exact techniques.
+
+Return ONLY JSON with: title, narrative, tone, instructions.
 
 Constraints:
-- invitation: 1–2 poetic sentences welcoming the player to play.
-- scene: 2–3 sentences painting the environment and awakening of instruments, no technical instructions.
-- lore: a short paragraph (2–3 sentences) linking the stats/traits to a sonic myth.
-- tone: three evocative words separated by commas summarizing the mood.
 - Output must be pure JSON, no Markdown fences.
+- narrative: 3–4 complete sentences (no bullet lists) blending ambience, place, and legend. Reference at least one stat and one capability label, but stay poetic.
+- tone: three evocative words separated by commas summarizing the mood.
+- instructions: exactly two imperative sentences.
+  - The first must start with “Start with” and quote exactly one capability label (no description, no extra text).
+  - The second must start with “Then” and refer to a DIFFERENT capability or stat in an abstract way, without numbers.
+  - Each sentence ≤ 18 words, abstract yet usable, no technical values, no numeric stat levels.
 `;
 };
 
@@ -157,18 +166,27 @@ Stats :
 ${statsLines}
 
 Jet de d20 : ${roll}
-Type d'événement attendu : ${kind} — ${kindHint}
+Type d'événement : ${kind} — ${kindHint}
 
 Ta mission :
-Crée un événement de tour qui décrit comment le joueur doit muter son patch maintenant.
-Retourne UNIQUEMENT un JSON avec : title, kind, instructions, constraints, description.
+Crée un événement de tour immersif qui décrit ce qui se passe MAINTENANT dans le monde sonore du personnage,
+et comment le joueur doit muter son patch pour répondre à cette situation.
 
-Contraintes :
-- Le champ kind DOIT valoir exactement "${kind}".
-- instructions : 2–3 phrases directes, imagées, en langage musical (pas de jargons RPG, pas de valeurs numériques, pas de mentions de stats).
-- constraints : tableau de 2–3 impératifs courts en termes sonores (aucun chiffre, aucune mention de stats ou d'ajustements techniques).
-- description : 2 phrases maximum, atmosphériques.
-- Pas de Markdown ni de texte hors JSON.
+Retourne UNIQUEMENT un JSON avec : title, narrative, tone, instructions.
+
+Contraintes sur les champs :
+- title : un titre court et évocateur (max 6 mots), sans chiffres.
+- narrative : 2–3 phrases continues (pas de listes) décrivant une petite scène précise, reliée au type d'événement.
+  • Fais ressentir une tension ou un basculement (surtout pour ${kind}).
+  • Évite le jargon technique : parle d'espaces, de matières, de gestes sonores.
+- tone : exactement trois mots séparés par des virgules qui résument l'humeur du moment.
+- instructions : tableau de 3 phrases impératives courtes (max 14 mots chacune).
+  • La première phrase demande une transformation active (mutation, déplacement, renversement).
+  • La deuxième impose une limite ou un évitement (ce qu'il faut retenir, contenir, taire).
+  • La troisième propose une légère transgression d'une règle implicite ou précédente.
+  • Jamais de boutons, paramètres, BPM, mesures, câbles, ni chiffres.
+
+Sortie : uniquement le JSON, aucun Markdown, aucun texte hors JSON.
 `;
 
   return `
@@ -182,17 +200,26 @@ Stats:
 ${statsLines}
 
 d20 roll: ${roll}
-Desired event kind: ${kind} — ${kindHint}
+Event kind: ${kind} — ${kindHint}
 
 Your task:
-Generate a turn event telling the player how to mutate their patch right now.
-Return ONLY raw JSON with: title, kind, instructions, constraints, description.
+Create an immersive turn event that describes what is happening RIGHT NOW in the character's sonic world,
+and how the player should mutate the patch in response.
 
-Constraints:
-- The kind field MUST be exactly "${kind}".
-- instructions: keep to 2–3 vivid sentences using musical/gestural language (avoid RPG jargon, numbers, or references to stats/knobs—system handles adjustments).
-- constraints: array of 2–3 short sonic imperatives, no numbering, no DnD references, no numeric/stat mentions, no precise technical steps.
-- description: max 2 sentences, atmospheric.
-- Output must be JSON only, no Markdown fences.
+Return ONLY raw JSON with: title, narrative, tone, instructions.
+
+Field constraints:
+- title: short, evocative title (max 6 words), no numbers.
+- narrative: 2–3 continuous sentences (no lists) describing a specific small scene tied to the event kind.
+  • Convey a sense of tension or shift (especially for ${kind}).
+  • Avoid technical jargon: speak in terms of space, texture, movement, gestures.
+- tone: exactly three words separated by commas that summarize the current mood.
+- instructions: array of 3 short imperative sentences (max 14 words each).
+  • First sentence calls for an active transformation (mutation, inversion, displacement).
+  • Second sentence sets a clear limitation or avoidance (what must be held back or ignored).
+  • Third sentence invites a gentle breaking of an implied or previous rule.
+  • Never mention knobs, parameters, BPM, meters, cables, or numbers.
+
+Output must be JSON only, no Markdown fences.
 `;
 };

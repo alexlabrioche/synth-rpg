@@ -3,7 +3,7 @@ import { join } from "path";
 import type {
   Character,
   Session,
-  GameEvent,
+  GameTurnEvent,
   SessionPrelude,
 } from "@synth-rpg/types";
 
@@ -12,7 +12,7 @@ const DATA_FILE = join(process.cwd(), "data.json");
 interface StoreShape {
   characters: Character[];
   sessions: Session[];
-  events: GameEvent[];
+  events: GameTurnEvent[];
   preludes: SessionPrelude[];
 }
 

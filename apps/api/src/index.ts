@@ -1,3 +1,4 @@
+import "./config/env";
 import Fastify from "fastify";
 import { capabilityRoutes } from "./routes/capability.routes";
 import { characterRoutes } from "./routes/character.routes";

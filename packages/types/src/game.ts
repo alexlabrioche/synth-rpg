@@ -25,24 +25,23 @@ export enum GameEventKind {
   Catastrophe = "CATASTROPHE",
 }
 
-export interface GameEvent {
+export interface GameTurnEvent {
   id: string;
   sessionId: string;
   turn: number;
   kind: GameEventKind;
   roll: number;
   title: string;
-  instructions: string;
-  constraints: string[];
-  description: string;
+  narrative: string;
+  tone: string;
+  instructions: string[];
 }
 
 export interface SessionPrelude {
   id: string;
   sessionId: string;
   title: string;
-  invitation: string;
-  scene: string;
-  lore: string;
+  narrative: string;
   tone: string;
+  instructions: string;
 }

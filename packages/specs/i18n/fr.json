@@ -133,7 +133,7 @@
       "description": "Retarde gates et triggers d'un temps réglable avant de les relayer."
     },
     "granular-synth": {
-      "label": "Granular synth",
+      "label": "Synthétiseur Granulaire",
       "description": "Moteur granulaire qui parcourt des buffers pour étirer, figer ou transformer les sons en nuages."
     },
     "inverter": {

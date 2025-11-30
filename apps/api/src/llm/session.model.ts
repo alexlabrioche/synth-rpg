@@ -4,12 +4,15 @@ import {
   GameEventLLMSchema,
   SessionPreludeLLMOutput,
   SessionPreludeLLMSchema,
-} from "../schemas/session.schema";
+} from "@synth-rpg/types";
+
+const sessionModelName = process.env.OLLAMA_SESSION_MODEL ?? "llama3.1:8b";
 
 const chat = new ChatOllama({
-  model: process.env.OLLAMA_MODEL ?? "llama3.1:8b",
+  model: sessionModelName,
   temperature: 0.8,
 });
+console.log("[Chat session model]:", sessionModelName);
 
 const sessionStructured = chat.withStructuredOutput(GameEventLLMSchema, {});
 const preludeStructured = chat.withStructuredOutput(

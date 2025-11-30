@@ -26,12 +26,12 @@ A playground for generating modular-synth inspired RPG characters and running na
 #### Characters
 - `POST /characters` – body `{ "capabilityIds": string[], "lang": "en" | "fr" }`. Generates a character, persists it, and returns the full `Character` record with translated capability blurbs used for the LLM prompt.
 - `GET /characters/:characterId` – retrieves a previously generated character (useful after refresh).
-- `GET /characters` *(planned)* – list all generated characters in storage for debugging/demo purposes.
+- `GET /characters` – returns `{ characters: Character[] }` so tooling can inspect everything that has been generated locally.
 
 #### Sessions
-- `POST /sessions` – body `{ "characterId": string, "lang": "en" | "fr" }`. Starts a session for the given character, returning `{ session, prelude }`.
-- `GET /sessions/:sessionId` – fetches the current session state so UIs can rehyrdate on load.
-- `POST /sessions/:sessionId/turns` – advances the campaign by one turn. The API rolls the d20 internally, feeds the context to the LLM, saves the resulting `GameEvent`, adjusts stats, and returns `{ session, event }`.
+- `POST /sessions` – body `{ "characterId": string, "lang": "en" | "fr" }`. Starts a session for the given character, returning `{ session, prelude }`. The `prelude` now contains a single `narrative` block plus `instructions` (two imperative sentences that reference the player’s capabilities and describe how to begin the jam).
+- `GET /sessions/:sessionId` – fetches the current session state so UIs can rehydrate on load.
+- `POST /sessions/:sessionId/turns` – advances the campaign by one turn. The API rolls the d20 internally, feeds the context to the LLM, saves the resulting `GameEvent`, adjusts stats, and returns `{ session, event }`. A `GameEvent` now contains `title`, `kind`, the original `roll`, plus creative `directives[]` (Oblique Strategies-style sentences), supporting `constraints[]`, and a short `lore` paragraph.
 - `GET /sessions/:sessionId/events` – history endpoint to retrieve all prior events for rendering timelines or logs.
 
 > **Note:** The API currently responds with English copy by default; pass `"lang": "fr"` wherever allowed to request French capability descriptions and LLM prompts.

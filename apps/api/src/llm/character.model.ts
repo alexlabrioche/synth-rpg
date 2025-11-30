@@ -1,13 +1,13 @@
 import { ChatOllama } from "@langchain/ollama";
-import {
-  CharacterLLMOutput,
-  CharacterLLMSchema,
-} from "../schemas/character.schema";
+import { CharacterLLMOutput, CharacterLLMSchema } from "@synth-rpg/types";
+
+const characterModelName = process.env.OLLAMA_CHARACTER_MODEL ?? "llama3.1:8b";
 
 const chat = new ChatOllama({
-  model: process.env.OLLAMA_MODEL ?? "llama3.1:8b",
+  model: characterModelName,
   temperature: 0.7,
 });
+console.log("[Chat character model]:", characterModelName);
 
 export const characterStructured = chat.withStructuredOutput(
   CharacterLLMSchema,
