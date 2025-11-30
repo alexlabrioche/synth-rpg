@@ -5,6 +5,7 @@ import {
   SessionPreludeLLMOutput,
   SessionPreludeLLMSchema,
 } from "@synth-rpg/types";
+import { parseStructuredOutput } from "./structured-output";
 
 const sessionModelName = process.env.OLLAMA_SESSION_MODEL ?? "llama3.1:8b";
 
@@ -14,10 +15,12 @@ const chat = new ChatOllama({
 });
 console.log("[Chat session model]:", sessionModelName);
 
-const sessionStructured = chat.withStructuredOutput(GameEventLLMSchema, {});
+const sessionStructured = chat.withStructuredOutput(GameEventLLMSchema, {
+  includeRaw: true,
+});
 const preludeStructured = chat.withStructuredOutput(
   SessionPreludeLLMSchema,
-  {}
+  { includeRaw: true }
 );
 
 export async function callSessionModel(args: {
@@ -26,12 +29,28 @@ export async function callSessionModel(args: {
 }): Promise<GameEventLLMOutput> {
   const { systemPrompt, userPrompt } = args;
 
-  const res = await sessionStructured.invoke([
+  const { raw, parsed } = await sessionStructured.invoke([
     { role: "system", content: systemPrompt },
     { role: "user", content: userPrompt },
   ]);
 
-  return res;
+  if (parsed) {
+    return parsed;
+  }
+
+  const fallback = parseStructuredOutput(raw, GameEventLLMSchema);
+  if (fallback) {
+    console.warn(
+      "[Session model] Structured output missing, parsed from raw message."
+    );
+    return fallback;
+  }
+
+  console.error(
+    "[Session model] Unable to parse structured output:",
+    raw.content
+  );
+  throw new Error("Failed to parse session model response");
 }
 
 export async function callSessionPreludeModel(args: {
@@ -40,10 +59,26 @@ export async function callSessionPreludeModel(args: {
 }): Promise<SessionPreludeLLMOutput> {
   const { systemPrompt, userPrompt } = args;
 
-  const res = await preludeStructured.invoke([
+  const { raw, parsed } = await preludeStructured.invoke([
     { role: "system", content: systemPrompt },
     { role: "user", content: userPrompt },
   ]);
 
-  return res;
+  if (parsed) {
+    return parsed;
+  }
+
+  const fallback = parseStructuredOutput(raw, SessionPreludeLLMSchema);
+  if (fallback) {
+    console.warn(
+      "[Session prelude model] Structured output missing, parsed from raw message."
+    );
+    return fallback;
+  }
+
+  console.error(
+    "[Session prelude model] Unable to parse structured output:",
+    raw.content
+  );
+  throw new Error("Failed to parse session prelude response");
 }
