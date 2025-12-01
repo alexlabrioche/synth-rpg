@@ -1,0 +1,47 @@
+{
+  "app": {
+    "title": "Synth RPG",
+    "buttons": {
+      "hello": "Say hello"
+    },
+    "actions": {
+      "createCharacter": "Create character"
+    },
+    "selection": {
+      "title": "Selected capabilities",
+      "empty": "Pick at least one capability to continue",
+      "total": "Total"
+    },
+    "loader": {
+      "creatingCharacter": {
+        "title": "Summoning your character",
+        "subtitle": "This usually takes a few seconds."
+      }
+    }
+  },
+  "character": {
+    "title": "Character sheet",
+    "actions": {
+      "back": "Back to selection"
+    },
+    "sections": {
+      "story": "Story",
+      "traits": "Traits",
+      "stats": "Stats",
+      "capabilities": "Capabilities",
+      "capabilityCountLabel": "total"
+    },
+    "stats": {
+      "density": "density",
+      "chaos": "chaos",
+      "stability": "stability",
+      "percussiveness": "percussion",
+      "expressivity": "expressivity",
+      "spatiality": "space"
+    }
+  },
+  "states": {
+    "loadingCharacter": "Loading character…",
+    "characterError": "Unable to load character."
+  }
+}

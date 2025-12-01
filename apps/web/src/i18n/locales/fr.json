@@ -1,0 +1,47 @@
+{
+  "app": {
+    "title": "Synth RPG",
+    "buttons": {
+      "hello": "Dire bonjour"
+    },
+    "actions": {
+      "createCharacter": "Créer un personnage"
+    },
+    "selection": {
+      "title": "Capacités sélectionnées",
+      "empty": "Choisis au moins une capacité pour continuer",
+      "total": "Total"
+    },
+    "loader": {
+      "creatingCharacter": {
+        "title": "Invocation du personnage",
+        "subtitle": "Cela peut prendre quelques secondes."
+      }
+    }
+  },
+  "character": {
+    "title": "Fiche personnage",
+    "actions": {
+      "back": "Retour à la sélection"
+    },
+    "sections": {
+      "story": "Récit",
+      "traits": "Traits",
+      "stats": "Statistiques",
+      "capabilities": "Capacités",
+      "capabilityCountLabel": "au total"
+    },
+    "stats": {
+      "density": "densité",
+      "chaos": "chaos",
+      "stability": "stabilité",
+      "percussiveness": "percussivité",
+      "expressivity": "expressivité",
+      "spatiality": "spatialité"
+    }
+  },
+  "states": {
+    "loadingCharacter": "Chargement du personnage…",
+    "characterError": "Impossible de charger le personnage."
+  }
+}

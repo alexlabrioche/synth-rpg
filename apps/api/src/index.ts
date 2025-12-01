@@ -1,13 +1,20 @@
 import "./config/env";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { capabilityRoutes } from "./routes/capability.routes";
 import { characterRoutes } from "./routes/character.routes";
 import { sessionRoutes } from "./routes/session.routes";
+import { createLogger } from "./logger";
+
+const logger = createLogger();
 
 const fastify = Fastify({
-  logger: true,
+  loggerInstance: logger,
 });
 
+fastify.register(cors, {
+  origin: true,
+});
 fastify.register(capabilityRoutes, { prefix: "/api/v1" });
 fastify.register(characterRoutes, { prefix: "/api/v1" });
 fastify.register(sessionRoutes, { prefix: "/api/v1" });
