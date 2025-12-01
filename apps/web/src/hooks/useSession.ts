@@ -1,4 +1,8 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 import type { Session, SessionPrelude } from "@synth-rpg/types";
 import { apiClient } from "../services/api-client";
 
@@ -10,6 +14,12 @@ export interface SessionDetailsResponse {
 export const sessionQueryKey = (sessionId: string | undefined) =>
   ["session", sessionId ?? ""] as const;
 type SessionQueryKey = ReturnType<typeof sessionQueryKey>;
+
+export const sessionQueryOptions = (sessionId: string) =>
+  queryOptions<SessionDetailsResponse>({
+    queryKey: sessionQueryKey(sessionId),
+    queryFn: () => apiClient.get<SessionDetailsResponse>(`/sessions/${sessionId}`),
+  });
 
 type SessionQueryOptions = Omit<
   UseQueryOptions<
@@ -31,14 +41,14 @@ export const useSessionQuery = (
     SessionDetailsResponse,
     SessionQueryKey
   >({
-    queryKey: sessionQueryKey(sessionId),
-    queryFn: async () => {
-      if (!sessionId) {
-        throw new Error("sessionId is required");
-      }
-
-      return apiClient.get<SessionDetailsResponse>(`/sessions/${sessionId}`);
-    },
+    ...(sessionId
+      ? sessionQueryOptions(sessionId)
+      : {
+          queryKey: sessionQueryKey(sessionId),
+          queryFn: async () => {
+            throw new Error("sessionId is required");
+          },
+        }),
     enabled: Boolean(sessionId),
     ...options,
   });

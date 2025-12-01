@@ -37,14 +37,15 @@ async function request<TResponse>(
 ): Promise<TResponse> {
   const url = `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
   const { body, headers, ...rest } = config;
+  const hasBody = body !== undefined && body !== null;
 
   const response = await fetch(url, {
-    method: config.method ?? (body ? "POST" : "GET"),
+    method: config.method ?? (hasBody ? "POST" : "GET"),
     headers: {
-      "Content-Type": "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: hasBody ? JSON.stringify(body) : undefined,
     ...rest,
   });
 

@@ -1,9 +1,14 @@
-import type { Character, Session, GameEvent, SessionPrelude } from "@synth-rpg/types";
+import type {
+  Character,
+  Session,
+  GameTurnEvent,
+  SessionPrelude,
+} from "@synth-rpg/types";
 import { loadStore, saveStore } from "./json.store";
 
 const characters = new Map<string, Character>();
 const sessions = new Map<string, Session>();
-const events = new Map<string, GameEvent>();
+const events = new Map<string, GameTurnEvent>();
 const preludes = new Map<string, SessionPrelude>();
 
 const bootstrap = () => {
@@ -62,7 +67,7 @@ export const sessionRepo = {
 };
 
 export const eventRepo = {
-  save(event: GameEvent) {
+  save(event: GameTurnEvent) {
     events.set(event.id, event);
     persist();
     return event;

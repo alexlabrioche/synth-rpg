@@ -1,4 +1,8 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 import type { GameTurnEvent } from "@synth-rpg/types";
 import { apiClient } from "../services/api-client";
 
@@ -9,6 +13,13 @@ export interface SessionEventsResponse {
 export const sessionEventsQueryKey = (sessionId: string | undefined) =>
   ["session-events", sessionId ?? ""] as const;
 type SessionEventsQueryKey = ReturnType<typeof sessionEventsQueryKey>;
+
+export const sessionEventsQueryOptions = (sessionId: string) =>
+  queryOptions<SessionEventsResponse>({
+    queryKey: sessionEventsQueryKey(sessionId),
+    queryFn: () =>
+      apiClient.get<SessionEventsResponse>(`/sessions/${sessionId}/events`),
+  });
 
 type SessionEventsQueryOptions = Omit<
   UseQueryOptions<
@@ -30,16 +41,14 @@ export const useSessionEventsQuery = (
     SessionEventsResponse,
     SessionEventsQueryKey
   >({
-    queryKey: sessionEventsQueryKey(sessionId),
-    queryFn: async () => {
-      if (!sessionId) {
-        throw new Error("sessionId is required");
-      }
-
-      return apiClient.get<SessionEventsResponse>(
-        `/sessions/${sessionId}/events`
-      );
-    },
+    ...(sessionId
+      ? sessionEventsQueryOptions(sessionId)
+      : {
+          queryKey: sessionEventsQueryKey(sessionId),
+          queryFn: async () => {
+            throw new Error("sessionId is required");
+          },
+        }),
     enabled: Boolean(sessionId),
     ...options,
   });

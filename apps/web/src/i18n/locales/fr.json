@@ -22,7 +22,11 @@
   "character": {
     "title": "Fiche personnage",
     "actions": {
-      "back": "Retour à la sélection"
+      "back": "Retour à la sélection",
+      "readyTitle": "Prêt à plonger ?",
+      "readySubtitle": "Ton synthé est accordé. Lance l'aventure quand tu veux.",
+      "startAdventure": "Commencer l'aventure",
+      "startingAdventure": "Invocation de la scène d'ouverture…"
     },
     "sections": {
       "story": "Récit",
@@ -42,6 +46,36 @@
   },
   "states": {
     "loadingCharacter": "Chargement du personnage…",
-    "characterError": "Impossible de charger le personnage."
+    "characterError": "Impossible de charger le personnage.",
+    "loadingSession": "Chargement de la session…",
+    "sessionError": "Impossible de charger cette session."
+  },
+  "session": {
+    "title": "Session",
+    "meta": {
+      "turn": "Tour"
+    },
+    "sections": {
+      "prelude": "Prélude",
+      "events": "Événements",
+      "eventCount": "entrées"
+    },
+    "empty": {
+      "events": "Aucun événement pour l'instant. Lance le dé pour éveiller le monde."
+    },
+    "events": {
+      "opportunity": "Opportunité",
+      "boon": "Bénédiction",
+      "complication": "Complication",
+      "mutation": "Mutation",
+      "catastrophe": "Catastrophe"
+    },
+    "actions": {
+      "backToCharacter": "Retour au personnage",
+      "nextTurnTitle": "Fais avancer le récit",
+      "nextTurnSubtitle": "Lance pour découvrir ce que le monde t'envoie ensuite.",
+      "rollNext": "Lancer le prochain tour",
+      "rolling": "Lancement en cours…"
+    }
   }
 }

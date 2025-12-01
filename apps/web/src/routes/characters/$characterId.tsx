@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { FixedActionBar } from "@/components/fixed-action-bar";
 import { cn } from "@/lib/utils";
 import { characterQueryOptions, useCharacterQuery } from "@/hooks/useCharacter";
 import { capabilityTranslationsToBatch, useI18n } from "@/i18n";
@@ -6,6 +7,7 @@ import {
   capabilitiesQueryOptions,
   useCapabilitiesQuery,
 } from "@/hooks/useCapabilitiesQuery";
+import { useStartSessionMutation } from "@/hooks/useStartSession";
 import type { CharacterStats } from "@synth-rpg/types";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -22,9 +24,19 @@ export const Route = createFileRoute("/characters/$characterId")({
 
 function CharacterDetails() {
   const { characterId } = Route.useParams();
+  const navigate = Route.useNavigate();
   const { data: character, isLoading, error } = useCharacterQuery(characterId);
   const { t, extend, lang } = useI18n();
   const { data: capabilitiesData } = useCapabilitiesQuery();
+  const { mutate: startSession, isPending: isStarting } =
+    useStartSessionMutation({
+      onSuccess: ({ session }) => {
+        navigate({
+          to: "/sessions/$sessionId",
+          params: { sessionId: session.id },
+        });
+      },
+    });
 
   useEffect(() => {
     if (!capabilitiesData?.translations) {
@@ -63,8 +75,17 @@ function CharacterDetails() {
     number,
   ][];
 
+  const handleStartAdventure = () => {
+    if (isStarting) return;
+    startSession({
+      characterId: character.id,
+      lang,
+    });
+  };
+
   return (
-    <div className="container py-10 space-y-10">
+    <>
+      <div className="container py-10 pb-32 space-y-10">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -161,5 +182,40 @@ function CharacterDetails() {
         </div>
       </section>
     </div>
+      <FixedActionBar
+        title={t("character.actions.readyTitle", "Ready to begin?")}
+        description={t(
+          "character.actions.readySubtitle",
+          "Your synth is tuned. Start the adventure when you are."
+        )}
+        actionLabel={t(
+          "character.actions.startAdventure",
+          "Start adventure"
+        )}
+        actionLoadingLabel={t(
+          "character.actions.startingAdventure",
+          "Summoning the opening scene…"
+        )}
+        onAction={handleStartAdventure}
+        disabled={isStarting}
+        loading={isStarting}
+      />
+      {isStarting && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur">
+          <div className="h-16 w-16 rounded-full border-4 border-muted border-t-primary animate-spin" />
+          <div className="text-center space-y-1">
+            <p className="text-base font-semibold">
+              {t(
+                "character.actions.startingAdventure",
+                "Summoning the opening scene…"
+              )}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {t("states.loadingCharacter", "Loading character…")}
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

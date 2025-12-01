@@ -42,9 +42,113 @@ export async function callCharacterModel(args: {
     return fallback;
   }
 
+  const textContent = extractTextContent(raw.content);
+  const parsedFromText = textContent
+    ? parseCharacterFromText(textContent)
+    : null;
+  if (parsedFromText) {
+    console.warn(
+      "[Character model] Parsed character response using fallback heuristics."
+    );
+    return parsedFromText;
+  }
+
   console.error(
     "[Character model] Unable to parse structured output:",
     raw.content
   );
   throw new Error("Failed to parse character model response");
+}
+
+function extractTextContent(content: unknown): string | null {
+  if (typeof content === "string") {
+    return content;
+  }
+
+  if (Array.isArray(content)) {
+    const parts = content
+      .map((block) => {
+        if (typeof block === "string") return block;
+        if (
+          block &&
+          typeof block === "object" &&
+          "text" in block &&
+          typeof block.text === "string"
+        ) {
+          return block.text;
+        }
+        if (
+          block &&
+          typeof block === "object" &&
+          "type" in block &&
+          block.type === "text" &&
+          typeof block.text === "string"
+        ) {
+          return block.text;
+        }
+        return "";
+      })
+      .filter(Boolean)
+      .join("\n")
+      .trim();
+    return parts.length ? parts : null;
+  }
+
+  return null;
+}
+
+function parseCharacterFromText(text: string): CharacterLLMOutput | null {
+  const name = matchLine(text, /name\s*[:\-]\s*(.+)/i);
+  const archetype = matchLine(text, /archetype\s*[:\-]\s*(.+)/i);
+  const description =
+    matchBlock(text, /description\s*[:\-]/i) ??
+    matchBlock(text, /backstory\s*[:\-]/i) ??
+    extractFallbackDescription(text);
+  const traitsBlock = matchBlock(text, /traits?\s*[:\-]/i);
+  const traits = traitsBlock
+    ? traitsBlock
+        .split(/\r?\n/)
+        .map((line) => line.replace(/^[-*•\d.\s]+/, "").trim())
+        .filter(Boolean)
+    : [];
+
+  if (name && archetype && description) {
+    return {
+      name: name.trim(),
+      archetype: archetype.trim(),
+      description: description.trim(),
+      traits: traits.length ? traits : ["enigmatic"],
+    };
+  }
+
+  return null;
+}
+
+function matchLine(text: string, regex: RegExp): string | null {
+  const match = text.match(regex);
+  return match?.[1]?.trim() ?? null;
+}
+
+function matchBlock(text: string, headingRegex: RegExp): string | null {
+  const match = text.match(
+    new RegExp(`${headingRegex.source}([\\s\\S]*?)(?:\\n\\s*\\n|$)`, "i")
+  );
+  if (!match) return null;
+  return match[1]?.trim() ?? null;
+}
+
+function extractFallbackDescription(text: string): string | null {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (!lines.length) return null;
+  return lines
+    .filter(
+      (line) =>
+        !/^name\s*[:\-]/i.test(line) &&
+        !/^archetype\s*[:\-]/i.test(line) &&
+        !/^traits?\s*[:\-]/i.test(line)
+    )
+    .join(" ");
 }

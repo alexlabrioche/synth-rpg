@@ -22,7 +22,11 @@
   "character": {
     "title": "Character sheet",
     "actions": {
-      "back": "Back to selection"
+      "back": "Back to selection",
+      "readyTitle": "Ready to begin?",
+      "readySubtitle": "Your synth is tuned. Start the adventure when you are.",
+      "startAdventure": "Start adventure",
+      "startingAdventure": "Summoning the opening scene…"
     },
     "sections": {
       "story": "Story",
@@ -42,6 +46,36 @@
   },
   "states": {
     "loadingCharacter": "Loading character…",
-    "characterError": "Unable to load character."
+    "characterError": "Unable to load character.",
+    "loadingSession": "Loading session…",
+    "sessionError": "Unable to load this session."
+  },
+  "session": {
+    "title": "Session",
+    "meta": {
+      "turn": "Turn"
+    },
+    "sections": {
+      "prelude": "Prelude",
+      "events": "Events",
+      "eventCount": "entries"
+    },
+    "empty": {
+      "events": "No events yet. Roll to awaken the world."
+    },
+    "events": {
+      "opportunity": "Opportunity",
+      "boon": "Boon",
+      "complication": "Complication",
+      "mutation": "Mutation",
+      "catastrophe": "Catastrophe"
+    },
+    "actions": {
+      "backToCharacter": "Back to character",
+      "nextTurnTitle": "Advance the story",
+      "nextTurnSubtitle": "Roll to discover what the world throws at you next.",
+      "rollNext": "Roll next turn",
+      "rolling": "Rolling next turn…"
+    }
   }
 }
