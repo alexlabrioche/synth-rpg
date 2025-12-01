@@ -4,9 +4,14 @@ import {
   GameEventLLMSchema,
   SessionPreludeLLMOutput,
   SessionPreludeLLMSchema,
-  GameEventKind,
+  SessionContextLLM,
 } from "@synth-rpg/types";
+import type { ZodType } from "zod";
 import { parseStructuredOutput } from "./structured-output";
+import {
+  buildFallbackEventFromText,
+  finalizeEvent,
+} from "./event-shape";
 
 const sessionModelName = process.env.OLLAMA_SESSION_MODEL ?? "llama3.1:8b";
 
@@ -14,21 +19,21 @@ const chat = new ChatOllama({
   model: sessionModelName,
   temperature: 0.8,
 });
-console.log("[Chat session model]:", sessionModelName);
 
 const sessionStructured = chat.withStructuredOutput(GameEventLLMSchema, {
   includeRaw: true,
 });
-const preludeStructured = chat.withStructuredOutput(
-  SessionPreludeLLMSchema,
-  { includeRaw: true }
-);
+
+const preludeStructured = chat.withStructuredOutput(SessionPreludeLLMSchema, {
+  includeRaw: true,
+});
 
 export async function callSessionModel(args: {
   systemPrompt: string;
   userPrompt: string;
+  sessionContext?: SessionContextLLM;
 }): Promise<GameEventLLMOutput> {
-  const { systemPrompt, userPrompt } = args;
+  const { systemPrompt, userPrompt, sessionContext } = args;
 
   const { raw, parsed } = await sessionStructured.invoke([
     { role: "system", content: systemPrompt },
@@ -36,41 +41,31 @@ export async function callSessionModel(args: {
   ]);
 
   if (parsed) {
-    return parsed;
+    return attachContext(finalizeEvent(parsed), sessionContext);
   }
 
-  const fallback = parseStructuredOutput(raw, GameEventLLMSchema);
-  if (fallback) {
-    console.warn(
-      "[Session model] Structured output missing, parsed from raw message."
-    );
-    return fallback;
+  const structured = parseStructuredOutput(raw, GameEventLLMSchema);
+  if (structured) {
+    return attachContext(finalizeEvent(structured), sessionContext);
   }
 
   const textContent = extractTextContent(raw.content);
-  const parsedFromText = textContent
-    ? parseGameEventFromText(textContent)
-    : null;
-  if (parsedFromText) {
-    console.warn(
-      "[Session model] Parsed game event response using fallback heuristics."
-    );
-    return parsedFromText;
+  if (textContent) {
+    const parsedFromText = parseJsonFromText(textContent, GameEventLLMSchema);
+    if (parsedFromText) {
+      return attachContext(finalizeEvent(parsedFromText), sessionContext);
+    }
+    if (textContent.trim().length > 0) {
+      return attachContext(
+        buildFallbackEventFromText(textContent),
+        sessionContext
+      );
+    }
   }
 
-  if (textContent && textContent.trim().length > 0) {
-    console.warn(
-      "[Session model] Using raw text fallback for game event output."
-    );
-    return buildFallbackEventFromText(textContent);
-  }
-
-  console.error(
-    "[Session model] Unable to parse structured output:",
-    raw.content
-  );
-  return buildFallbackEventFromText(
-    textContent ?? "The patchbay hums but nothing emerges."
+  return attachContext(
+    buildFallbackEventFromText("The patchbay hums but nothing emerges."),
+    sessionContext
   );
 }
 
@@ -89,36 +84,24 @@ export async function callSessionPreludeModel(args: {
     return parsed;
   }
 
-  const fallback = parseStructuredOutput(raw, SessionPreludeLLMSchema);
-  if (fallback) {
-    console.warn(
-      "[Session prelude model] Structured output missing, parsed from raw message."
-    );
-    return fallback;
+  const structured = parseStructuredOutput(raw, SessionPreludeLLMSchema);
+  if (structured) {
+    return structured;
   }
 
   const textContent = extractTextContent(raw.content);
   const parsedFromText = textContent
-    ? parseSessionPreludeFromText(textContent)
+    ? parseJsonFromText(textContent, SessionPreludeLLMSchema) ??
+      parseSessionPreludeFromText(textContent)
     : null;
   if (parsedFromText) {
-    console.warn(
-      "[Session prelude model] Parsed prelude response using fallback heuristics."
-    );
     return parsedFromText;
   }
 
   if (textContent && textContent.trim().length > 0) {
-    console.warn(
-      "[Session prelude model] Using raw text fallback for prelude output."
-    );
     return buildFallbackPreludeFromText(textContent);
   }
 
-  console.error(
-    "[Session prelude model] Unable to parse structured output:",
-    raw.content
-  );
   return buildFallbackPreludeFromText(
     textContent ?? "A faint shimmer waits for a brave voltage."
   );
@@ -161,52 +144,11 @@ function extractTextContent(content: unknown): string | null {
   return null;
 }
 
-const EVENT_KIND_LOOKUP: Record<string, GameEventKind> = {
-  opportunity: GameEventKind.Opportunity,
-  boon: GameEventKind.Boon,
-  complication: GameEventKind.Complication,
-  mutation: GameEventKind.Mutation,
-  catastrophe: GameEventKind.Catastrophe,
-};
-
-function parseGameEventFromText(text: string): GameEventLLMOutput | null {
-  const title = matchLine(text, /title\s*[:\-]\s*(.+)/i) ?? extractFirstLine(text);
-  const kindRaw =
-    matchLine(text, /kind\s*[:\-]\s*(.+)/i) ??
-    matchLine(text, /event\s*type\s*[:\-]\s*(.+)/i);
-  const kind = normalizeEventKind(kindRaw);
-  const tone =
-    matchLine(text, /tone\s*[:\-]\s*(.+)/i) ??
-    matchLine(text, /mood\s*[:\-]\s*(.+)/i) ??
-    "neutral";
-  const narrative =
-    matchBlock(text, /narrative\s*[:\-]/i) ??
-    matchBlock(text, /scene\s*[:\-]/i) ??
-    extractFallbackDescription(text);
-  const instructionsBlock =
-    matchBlock(text, /instructions?\s*[:\-]/i) ??
-    matchBlock(text, /actions?\s*[:\-]/i);
-  const instructions = instructionsBlock
-    ? splitInstructions(instructionsBlock)
-    : [];
-
-  if (title && narrative) {
-    return {
-      title: title.trim(),
-      kind,
-      narrative: narrative.trim(),
-      tone: tone.trim(),
-      instructions: instructions.length ? instructions : [],
-    };
-  }
-
-  return null;
-}
-
 function parseSessionPreludeFromText(
   text: string
 ): SessionPreludeLLMOutput | null {
-  const title = matchLine(text, /title\s*[:\-]\s*(.+)/i) ?? extractFirstLine(text);
+  const title =
+    matchLine(text, /title\s*[:\-]\s*(.+)/i) ?? extractFirstLine(text);
   const narrative =
     matchBlock(text, /narrative\s*[:\-]/i) ??
     matchBlock(text, /story\s*[:\-]/i) ??
@@ -261,33 +203,9 @@ function extractFallbackDescription(text: string): string | null {
     .join(" ");
 }
 
-function splitInstructions(block: string): string[] {
-  return block
-    .split(/\r?\n|[•\-*]/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
-
 function extractFirstLine(text: string): string | null {
   const first = text.split(/\r?\n/).map((line) => line.trim())[0];
   return first && first.length ? first : null;
-}
-
-function normalizeEventKind(value?: string | null): GameEventKind {
-  if (!value) return GameEventKind.Opportunity;
-  const normalized = value.toLowerCase().trim();
-  return EVENT_KIND_LOOKUP[normalized] ?? GameEventKind.Opportunity;
-}
-
-function buildFallbackEventFromText(text: string): GameEventLLMOutput {
-  const firstLine = extractFirstLine(text) ?? "Unexpected resonance";
-  return {
-    title: firstLine,
-    kind: GameEventKind.Opportunity,
-    narrative: text.trim(),
-    tone: "mysterious",
-    instructions: [],
-  };
 }
 
 function buildFallbackPreludeFromText(text: string): SessionPreludeLLMOutput {
@@ -298,4 +216,102 @@ function buildFallbackPreludeFromText(text: string): SessionPreludeLLMOutput {
     tone: "mystical",
     instructions: "",
   };
+}
+
+function attachContext(
+  event: GameEventLLMOutput,
+  context?: SessionContextLLM
+): GameEventLLMOutput {
+  if (!context) {
+    return event;
+  }
+
+  return {
+    ...event,
+    sessionContext: context,
+  };
+}
+
+function parseJsonFromText<T>(
+  text: string,
+  schema: ZodType<T>
+): T | null {
+  const fragments = collectJsonFragments(text);
+  for (const fragment of fragments) {
+    const parsed = tryParseLoose(fragment);
+    if (!parsed) continue;
+    const validated = schema.safeParse(parsed);
+    if (validated.success) {
+      return validated.data;
+    }
+  }
+  return null;
+}
+
+function tryParseLoose(source: string): Record<string, unknown> | null {
+  let current = source.trim();
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (!current.startsWith("{") || !current.endsWith("}")) {
+      break;
+    }
+    try {
+      return JSON.parse(current);
+    } catch {
+      const next = current.slice(1, -1).trim();
+      if (next === current) {
+        break;
+      }
+      current = next;
+    }
+  }
+  return null;
+}
+
+function collectJsonFragments(text: string): string[] {
+  const fragments: string[] = [];
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  let startIndex = -1;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (inString) {
+      if (escape) {
+        escape = false;
+      } else if (char === "\\") {
+        escape = true;
+      } else if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{") {
+      if (depth === 0) {
+        startIndex = i;
+      }
+      depth += 1;
+      continue;
+    }
+
+    if (char === "}") {
+      if (depth > 0) {
+        depth -= 1;
+        if (depth === 0 && startIndex !== -1) {
+          const fragment = text.slice(startIndex, i + 1);
+          fragments.push(fragment);
+          startIndex = -1;
+        }
+      }
+    }
+  }
+
+  return fragments;
 }

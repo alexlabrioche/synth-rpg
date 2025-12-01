@@ -1,4 +1,5 @@
 import { CharacterStats } from "./character";
+import type { LLMTelemetry, ResponseTag, SessionContextLLM } from "./llm";
 
 export type Lang = "en" | "fr";
 
@@ -32,9 +33,13 @@ export interface GameTurnEvent {
   kind: GameEventKind;
   roll: number;
   title: string;
-  narrative: string;
-  tone: string;
-  instructions: string[];
+  narrativeContext: string;
+  gearStrategy: string;
+  abstractPrompt: string;
+  nextHook?: string;
+  tags: ResponseTag[];
+  telemetry: LLMTelemetry;
+  sessionContext?: SessionContextLLM;
 }
 
 export interface SessionPrelude {

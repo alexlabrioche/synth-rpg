@@ -134,16 +134,55 @@ function SessionView() {
                   </div>
                   <h3 className="text-lg font-semibold">{event.title}</h3>
                   <p className="text-muted-foreground whitespace-pre-line">
-                    {event.narrative}
+                    {event.narrativeContext}
                   </p>
-                  {event.instructions?.length ? (
-                    <ul className="mt-2 list-disc pl-5 text-sm text-foreground space-y-1">
-                      {event.instructions.map((instruction, idx) => (
-                        <li key={`${event.id}-instruction-${idx}`}>
-                          {instruction}
-                        </li>
+                  <div className="grid gap-3 pt-3 sm:grid-cols-2">
+                    <div className="rounded-xl bg-muted/20 p-3">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        {t("session.events.gearStrategy", "Gear cue")}
+                      </p>
+                      <p className="text-sm text-foreground">
+                        {event.gearStrategy}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-muted/20 p-3">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        {t(
+                          "session.events.abstractPrompt",
+                          "Abstract prompt"
+                        )}
+                      </p>
+                      <p className="text-sm text-foreground">
+                        {event.abstractPrompt}
+                      </p>
+                    </div>
+                  </div>
+                  {event.nextHook ? (
+                    <p className="text-sm italic text-muted-foreground">
+                      {t("session.events.nextHook", "Next hook:")}{" "}
+                      <span className="text-foreground">
+                        {event.nextHook}
+                      </span>
+                    </p>
+                  ) : null}
+                  {event.tags?.length ? (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {event.tags.map((tag, idx) => (
+                        <span
+                          key={`${event.id}-tag-${idx}`}
+                          className="rounded-full border border-border/60 bg-card/60 px-3 py-1 text-xs text-muted-foreground"
+                        >
+                          {tag.type ? (
+                            <span className="uppercase tracking-wide text-[10px] mr-1">
+                              {tag.type}
+                            </span>
+                          ) : null}
+                          <span className="text-foreground font-medium">
+                            {tag.value}
+                          </span>
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   ) : null}
                 </article>
               ))}

@@ -1,4 +1,4 @@
-import type { Character, Lang } from "@synth-rpg/types";
+import type { Character, Lang, SessionContextLLM } from "@synth-rpg/types";
 import { GameEventKind } from "@synth-rpg/types";
 import { formatStatsLines } from "../helpers/stats.helpers";
 
@@ -34,6 +34,118 @@ const formatTraits = (traits: string[]): string =>
 
 type SessionPromptMode = "prelude" | "turn";
 
+const SESSION_CONTEXT_COPY: Record<
+  Lang,
+  {
+    header: string;
+    goalLabel: string;
+    moodLabel: string;
+    focusLabel: string;
+    gearLabel: string;
+    gearEmpty: string;
+    movesLabel: string;
+    movesEmpty: string;
+    capabilityLabel: string;
+    capabilityEmpty: string;
+    goalFallback: string;
+    moodFallback: string;
+    focusFallback: string;
+  }
+> = {
+  en: {
+    header: "Session context:",
+    goalLabel: "Goal",
+    moodLabel: "Mood",
+    focusLabel: "Focus",
+    gearLabel: "Gear summary",
+    gearEmpty: "- no declared gear",
+    movesLabel: "Recent moves",
+    movesEmpty: "- no previous moves",
+    capabilityLabel: "Capability tags",
+    capabilityEmpty: "none declared",
+    goalFallback: "Keep the jam playful.",
+    moodFallback: "curious drift",
+    focusFallback: "Stay flexible and open.",
+  },
+  fr: {
+    header: "Contexte de session :",
+    goalLabel: "Objectif",
+    moodLabel: "Humeur",
+    focusLabel: "Focal",
+    gearLabel: "Résumé du setup",
+    gearEmpty: "- aucun équipement déclaré",
+    movesLabel: "Mouvements récents",
+    movesEmpty: "- aucun mouvement précédent",
+    capabilityLabel: "Tags de capacités",
+    capabilityEmpty: "aucun tag",
+    goalFallback: "Entretiens la jam et l'émerveillement.",
+    moodFallback: "curiosité diffuse",
+    focusFallback: "Reste souple et ouvert.",
+  },
+};
+
+const truncate = (value: string | undefined, max = 140) => {
+  if (!value) return "";
+  return value.length > max ? `${value.slice(0, max - 3)}...` : value;
+};
+
+const formatList = (items: string[], emptyLine: string) => {
+  if (!items.length) return emptyLine;
+  return items.map((item) => `- ${item}`).join("\n");
+};
+
+const formatGearBlock = (lang: Lang, context: SessionContextLLM) => {
+  if (!context.gear || context.gear.length === 0) {
+    return SESSION_CONTEXT_COPY[lang].gearEmpty;
+  }
+
+  return context.gear
+    .map((gear) => {
+      const role = gear.role ? ` (${gear.role})` : "";
+      const description = truncate(gear.description, 120);
+      const descLine = description ? ` — ${description}` : "";
+      const traitLine =
+        gear.traits && gear.traits.length
+          ? gear.traits.join(", ")
+          : lang === "fr"
+            ? "aucun trait"
+            : "no traits";
+      const capabilityLine =
+        gear.capabilities && gear.capabilities.length
+          ? gear.capabilities.join(", ")
+          : lang === "fr"
+            ? "aucune capacité"
+            : "no capabilities";
+      return `- ${gear.name}${role}${descLine}\n  • Traits: ${traitLine}\n  • Capabilities: ${capabilityLine}`;
+    })
+    .join("\n");
+};
+
+const formatSessionContextBlock = (
+  lang: Lang,
+  context: SessionContextLLM
+): string => {
+  const copy = SESSION_CONTEXT_COPY[lang];
+  const goal = context.goal ?? copy.goalFallback;
+  const mood = context.mood ?? copy.moodFallback;
+  const focus = context.focus ?? copy.focusFallback;
+  const moves = formatList(context.recentMoves ?? [], copy.movesEmpty);
+  const capabilityTags =
+    (context.capabilityTags ?? []).join(", ") || copy.capabilityEmpty;
+
+  return `
+${copy.header}
+${copy.goalLabel}: ${goal}
+${copy.moodLabel}: ${mood}
+${copy.focusLabel}: ${focus}
+${copy.gearLabel}:
+${formatGearBlock(lang, context)}
+${copy.movesLabel}:
+${moves}
+${copy.capabilityLabel}: ${capabilityTags}
+`.trim();
+};
+
 interface GetSystemPromptParams {
   lang: Lang;
 }
@@ -42,24 +154,26 @@ export const getSessionSystemPrompt = ({ lang }: GetSystemPromptParams) => {
   if (lang === "fr")
     return `
 Tu es le maître de jeu d'un RPG musical expérimental.
-Tu écris les préludes narratifs et les événements de tour qui guident le joueur.
+Tu écris les préludes narratifs et les événements de tour en suivant exactement la structure JSON demandée.
 
 Règles :
-- Ton écriture reste courte, abstraite, poétique.
-- Pas de marques ou modèles réels.
-- Jamais d'instructions techniques ou de câblage.
-- Les directives doivent évoquer les Oblique Strategies : impératifs surréalistes sans mention de boutons ou paramètres.
+- Garde un ton court, poétique, absurde, sans jargon technique.
+- Ne cite jamais de marques ou modèles réels.
+- Respecte la séparation des canaux : le récit reste descriptif, les consignes vivent dans les champs dédiés (gearStrategy, abstractPrompt, etc.).
+- Les consignes doivent évoquer les Oblique Strategies : métaphores impératives, sans valeurs numériques ni noms de paramètres.
+- Tu dois toujours répondre par UN SEUL objet JSON valide, sans texte avant/après, sans Markdown, sans décoration. Aucune autre sortie n'est autorisée.
 `;
 
   return `
 You are a game master for an experimental music RPG.
-You craft lore preludes and turn events that guide the player.
+You craft lore preludes and turn events, always following the exact JSON contract specified in the user prompt.
 
 Rules:
-- Keep the writing short, abstract, and poetic.
-- No real-world brand or model names.
-- Never give wiring or technical patch instructions.
-- Directives must feel like Oblique Strategies: surreal, imperative, never literal knob/parameter talk.
+- Keep everything short, poetic, and slightly mischievous.
+- Never mention real-world brands or specific model names.
+- Keep narrative context purely descriptive; all prompts/instructions must live in their dedicated fields (gearStrategy, abstractPrompt, etc.).
+- Guidance should feel like Oblique Strategies: metaphorical, imperative, no numbers or parameter names.
+- You MUST reply with a single valid JSON object only—no code fences, no prose before/after, no explanations.
 `;
 };
 
@@ -95,7 +209,7 @@ Mission :
 Ouvre la campagne sonore en décrivant une scène unique et le mythe qui entourent ce personnage.
 Tisse ton récit à partir de ses traits/stats et des capacités listées ci-dessus sans donner d'instructions techniques.
 
-Retourne UNIQUEMENT un JSON avec : title, narrative, tone, instructions.
+Retourne UNIQUEMENT un JSON avec : title, narrative, tone, instructions. Ta réponse doit être un seul objet JSON valide sans aucun texte supplémentaire.
 
 Contraintes :
 - Pas de Markdown ni de texte hors JSON.
@@ -124,7 +238,7 @@ Your task:
 Open the sonic campaign by narrating a single cohesive scene and myth for this character.
 Use the traits/stats and capabilities above to describe how their world awakens, but never describe wiring or exact techniques.
 
-Return ONLY JSON with: title, narrative, tone, instructions.
+Return ONLY JSON with: title, narrative, tone, instructions. The response must be a single JSON object with no extra text or Markdown anywhere.
 
 Constraints:
 - Output must be pure JSON, no Markdown fences.
@@ -142,6 +256,8 @@ interface GetTurnPromptParams {
   lang: Lang;
   roll: number;
   kind: GameEventKind;
+  capabilityHints: string;
+  sessionContext: SessionContextLLM;
 }
 
 export const getSessionTurnUserPrompt = ({
@@ -149,6 +265,8 @@ export const getSessionTurnUserPrompt = ({
   lang,
   roll,
   kind,
+  capabilityHints,
+  sessionContext,
 }: GetTurnPromptParams) => {
   const traits = formatTraits(character.traits);
   const statsLines = formatStatsLines(character.stats);
@@ -165,28 +283,29 @@ ${traits}
 Stats :
 ${statsLines}
 
+Capacités disponibles :
+${capabilityHints}
+
+Contexte :
+${formatSessionContextBlock(lang, sessionContext)}
+
 Jet de d20 : ${roll}
 Type d'événement : ${kind} — ${kindHint}
 
 Ta mission :
-Crée un événement de tour immersif qui décrit ce qui se passe MAINTENANT dans le monde sonore du personnage,
-et comment le joueur doit muter son patch pour répondre à cette situation.
+Crée un événement simple qui inspire le joueur.
 
-Retourne UNIQUEMENT un JSON avec : title, narrative, tone, instructions.
+Ta réponse DOIT être exactement UN objet JSON valide, rien d'autre (pas de texte avant/après, pas de Markdown).
 
-Contraintes sur les champs :
-- title : un titre court et évocateur (max 6 mots), sans chiffres.
-- narrative : 2–3 phrases continues (pas de listes) décrivant une petite scène précise, reliée au type d'événement.
-  • Fais ressentir une tension ou un basculement (surtout pour ${kind}).
-  • Évite le jargon technique : parle d'espaces, de matières, de gestes sonores.
-- tone : exactement trois mots séparés par des virgules qui résument l'humeur du moment.
-- instructions : tableau de 3 phrases impératives courtes (max 14 mots chacune).
-  • La première phrase demande une transformation active (mutation, déplacement, renversement).
-  • La deuxième impose une limite ou un évitement (ce qu'il faut retenir, contenir, taire).
-  • La troisième propose une légère transgression d'une règle implicite ou précédente.
-  • Jamais de boutons, paramètres, BPM, mesures, câbles, ni chiffres.
+Champs obligatoires :
+- title : titre évocateur ≤ 6 mots.
+- narrative : une seule phrase à la troisième personne décrivant la scène.
+- gearStrategy : une phrase qui mentionne au moins une capacité listée plus haut (sans jargon technique).
+- abstractPrompt : une phrase courte (≤ 14 mots) façon Oblique Strategy, sans mention de capacités.
 
-Sortie : uniquement le JSON, aucun Markdown, aucun texte hors JSON.
+Contraintes supplémentaires :
+- Pas de marques ou modèles réels.
+- Pas de chiffres, BPM, CV, ni instructions techniques précises.
 `;
 
   return `
@@ -199,27 +318,29 @@ ${traits}
 Stats:
 ${statsLines}
 
+Available capabilities:
+${capabilityHints}
+
+Session context:
+${formatSessionContextBlock(lang, sessionContext)}
+
 d20 roll: ${roll}
 Event kind: ${kind} — ${kindHint}
 
 Your task:
-Create an immersive turn event that describes what is happening RIGHT NOW in the character's sonic world,
-and how the player should mutate the patch in response.
+Write a concise event that keeps the story and the cue separate.
 
-Return ONLY raw JSON with: title, narrative, tone, instructions.
+You MUST reply with exactly one valid JSON object and nothing else.
 
-Field constraints:
-- title: short, evocative title (max 6 words), no numbers.
-- narrative: 2–3 continuous sentences (no lists) describing a specific small scene tied to the event kind.
-  • Convey a sense of tension or shift (especially for ${kind}).
-  • Avoid technical jargon: speak in terms of space, texture, movement, gestures.
-- tone: exactly three words separated by commas that summarize the current mood.
-- instructions: array of 3 short imperative sentences (max 14 words each).
-  • First sentence calls for an active transformation (mutation, inversion, displacement).
-  • Second sentence sets a clear limitation or avoidance (what must be held back or ignored).
-  • Third sentence invites a gentle breaking of an implied or previous rule.
-  • Never mention knobs, parameters, BPM, meters, cables, or numbers.
+Fields:
+- title: evocative ≤ 6 words.
+- narrative: one third-person sentence describing the current scene (no imperatives).
+- gearStrategy: one sentence referencing at least one capability label from the list (no technical numbers).
+- abstractPrompt: one short oblique-strategy style sentence (≤ 14 words) with metaphorical language, no capability names.
 
-Output must be JSON only, no Markdown fences.
+Additional rules:
+- No real-world brands/models.
+- No BPM/CV/numeric settings.
+- No Markdown or commentary outside the JSON object.
 `;
 };

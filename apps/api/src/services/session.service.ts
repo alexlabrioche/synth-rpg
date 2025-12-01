@@ -1,8 +1,10 @@
 import type {
+  Character,
   CharacterStats,
   GameTurnEvent,
   Lang,
   Session,
+  SessionContextLLM,
   SessionPrelude,
 } from "@synth-rpg/types";
 import { GameEventKind, GamePhase } from "@synth-rpg/types";
@@ -48,6 +50,8 @@ export class SessionNotFoundError extends Error {
     this.name = "SessionNotFoundError";
   }
 }
+
+const TURN_TEMPLATE_VERSION = "turn/v2";
 
 const getEventKindFromRoll = (roll: number): GameEventKind => {
   if (roll === 1) {
@@ -161,85 +165,87 @@ const buildFallbackInstructions = (
   return `${first} ${second}`;
 };
 
-const asStringArray = (value: unknown): string[] | null => {
-  if (!Array.isArray(value)) return null;
-  return value
-    .filter((item): item is string => typeof item === "string")
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
+interface BuildSessionContextParams {
+  session: Session;
+  character: Character;
+  lang: Lang;
+  previousEvents: GameTurnEvent[];
+}
+
+const buildSessionContext = ({
+  session,
+  character,
+  lang,
+  previousEvents,
+}: BuildSessionContextParams): SessionContextLLM => {
+  const capabilityLabels = getCapabilityLabels(character.capabilities, lang);
+  const sortedEvents = [...previousEvents].sort((a, b) => b.turn - a.turn);
+  const recentMoves = sortedEvents.slice(0, 3).map((event) => {
+    const prefix = lang === "fr" ? `Tour ${event.turn}` : `Turn ${event.turn}`;
+    const kindLabel = event.kind.toLowerCase();
+    const action = event.abstractPrompt || event.gearStrategy;
+    return `${prefix} (${kindLabel}): ${event.title} — ${action}`;
+  });
+
+  const moodTagEvent = sortedEvents.find((event) =>
+    event.tags?.some((tag) => tag.type === "mood")
+  );
+  const moodTag = moodTagEvent?.tags?.find(
+    (tag) => tag.type === "mood"
+  )?.value;
+
+  const mood =
+    moodTag ??
+    character.traits[0] ??
+    (lang === "fr" ? "curiosité diffuse" : "curious drift");
+
+  const dominantStat = pickDominantStat(session.stats);
+  const statLabel = STAT_LABELS[lang][dominantStat];
+  const statValue = session.stats[dominantStat];
+  const focus =
+    lang === "fr"
+      ? `Accent sur ${statLabel} (${statValue}/10).`
+      : `Focus on ${statLabel} (${statValue}/10).`;
+
+  const goal =
+    lang === "fr"
+      ? `Guider ${character.name} vers une percée ${character.archetype}.`
+      : `Guide ${character.name} toward a ${character.archetype} breakthrough.`;
+
+  const gearEntryName =
+    lang === "fr"
+      ? `Ensemble de ${character.name}`
+      : `${character.name}'s rig`;
+
+  return {
+    goal,
+    mood,
+    focus,
+    location: undefined,
+    gear: [
+      {
+        name: gearEntryName,
+        role: character.archetype,
+        description: character.description,
+        capabilities: capabilityLabels,
+        traits: character.traits,
+      },
+    ],
+    recentMoves,
+    capabilityTags: capabilityLabels,
+  };
 };
 
-const stripQuotes = (value: string) =>
-  value.replace(/^[\s"'“”«»`]+/, "").replace(/[\s"'“”«»`]+$/, "");
-
-const tryFallbackListParse = (raw: string): string[] | null => {
-  const inner = raw.slice(1, -1).trim();
-  if (!inner) return [];
-  const items = inner
-    .split(/[,，]/)
-    .map((item) => stripQuotes(item))
-    .filter((item) => item.length > 0);
-  return items.length > 0 ? items : null;
-};
-
-const tryParseList = (value: string): string[] | null => {
-  const trimmed = value.trim();
-  if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) return null;
-  try {
-    const normalized = trimmed.replace(/[“”«»]/g, '"');
-    const parsed = JSON.parse(normalized);
-    return asStringArray(parsed);
-  } catch {
-    return tryFallbackListParse(trimmed);
+const normalizeText = (value: string | string[] | undefined): string => {
+  if (!value) return "";
+  if (Array.isArray(value)) {
+    return value
+      .map((part) => part?.trim())
+      .filter((part): part is string => Boolean(part && part.length))
+      .join(" ")
+      .trim();
   }
-};
-
-const splitSentences = (value: string): string[] =>
-  value
-    .split(/[\n\r]+/)
-    .map((part) =>
-      part
-        .replace(/^[\s•\-–—]+/, "")
-        .replace(/[\s]+$/, "")
-        .trim()
-    )
-    .filter((part) => part.length > 0);
-
-const normalizeInstructions = (
-  input: string | string[] | undefined
-): string[] => {
-  if (!input) return [];
-  if (Array.isArray(input)) {
-    const cleaned = asStringArray(input) ?? [];
-    return cleaned.slice(0, 3);
-  }
-  const parsed = tryParseList(input);
-  if (parsed) {
-    return parsed.slice(0, 3);
-  }
-  const lines = splitSentences(input);
-  if (lines.length > 0) {
-    return lines.slice(0, 3);
-  }
-  const trimmed = input.trim();
-  return trimmed ? [trimmed] : [];
-};
-
-const normalizeNarrative = (input: string | undefined): string => {
-  if (!input) return "";
-  const trimmed = input.trim();
-  return trimmed;
-};
-
-const normalizeTone = (input: string | undefined): string => {
-  if (!input) return "";
-  const parts = input
-    .split(/[,\n]/)
-    .map((p) => p.trim())
-    .filter((p) => p.length > 0)
-    .slice(0, 3);
-
-  return parts.join(", ");
+  return value.trim();
 };
 
 export async function startSession(
@@ -334,22 +340,39 @@ export async function playNextTurn(
   const kind = getEventKindFromRoll(roll);
   const nextTurn = session.turn + 1;
 
+  const existingEvents = eventRepo.getBySession(session.id);
   const systemPrompt = getSessionSystemPrompt({ lang: session.lang });
+  const capabilityHints = formatCapabilityHints(
+    character.capabilities,
+    session.lang
+  );
+  const sessionContext = buildSessionContext({
+    session,
+    character,
+    lang: session.lang,
+    previousEvents: existingEvents,
+  });
   const userPrompt = getSessionTurnUserPrompt({
     character,
     lang: session.lang,
     roll,
     kind,
+    capabilityHints,
+    sessionContext,
   });
 
   const llmOutput = await callSessionModel({
     systemPrompt,
     userPrompt,
+    sessionContext,
   });
 
-  const instructions = normalizeInstructions(llmOutput.instructions);
-  const narrative = normalizeNarrative(llmOutput.narrative);
-  const tone = normalizeTone(llmOutput.tone);
+  const telemetry = {
+    ...llmOutput.telemetry,
+    templateVersion:
+      llmOutput.telemetry?.templateVersion ?? TURN_TEMPLATE_VERSION,
+    warnings: llmOutput.telemetry?.warnings ?? [],
+  };
 
   const event: GameTurnEvent = {
     id: crypto.randomUUID(),
@@ -357,10 +380,18 @@ export async function playNextTurn(
     turn: nextTurn,
     kind,
     roll,
-    title: llmOutput.title.trim(),
-    narrative,
-    tone,
-    instructions,
+    title: llmOutput.title?.trim() ?? "Untitled",
+    narrativeContext: normalizeText(
+      (llmOutput as { narrative?: string | string[] }).narrative ??
+        (llmOutput as { narrativeContext?: string | string[] })
+          .narrativeContext
+    ),
+    gearStrategy: normalizeText(llmOutput.gearStrategy),
+    abstractPrompt: normalizeText(llmOutput.abstractPrompt),
+    nextHook: normalizeText(llmOutput.nextHook) || undefined,
+    tags: llmOutput.tags ?? [],
+    telemetry,
+    sessionContext: llmOutput.sessionContext ?? sessionContext,
   };
 
   const updatedStats = adjustStatsForEvent(session.stats, kind, roll);

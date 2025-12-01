@@ -9,7 +9,6 @@ const chat = new ChatOllama({
   model: characterModelName,
   temperature: 0.7,
 });
-console.log("[Chat character model]:", characterModelName);
 
 export const characterStructured = chat.withStructuredOutput(
   CharacterLLMSchema,
@@ -67,34 +66,70 @@ function extractTextContent(content: unknown): string | null {
 
   if (Array.isArray(content)) {
     const parts = content
-      .map((block) => {
-        if (typeof block === "string") return block;
-        if (
-          block &&
-          typeof block === "object" &&
-          "text" in block &&
-          typeof block.text === "string"
-        ) {
-          return block.text;
-        }
-        if (
-          block &&
-          typeof block === "object" &&
-          "type" in block &&
-          block.type === "text" &&
-          typeof block.text === "string"
-        ) {
-          return block.text;
-        }
-        return "";
-      })
+      .map((block) => extractTextBlock(block))
       .filter(Boolean)
       .join("\n")
       .trim();
     return parts.length ? parts : null;
   }
 
+  if (content && typeof content === "object") {
+    const value = extractTextBlock(content);
+    return value.length ? value : null;
+  }
+
   return null;
+}
+
+function extractTextBlock(block: unknown): string {
+  if (typeof block === "string") {
+    return block;
+  }
+
+  if (block && typeof block === "object") {
+    const maybeText = (block as { text?: unknown }).text;
+    if (typeof maybeText === "string") {
+      return maybeText;
+    }
+
+    const maybeType = (block as { type?: unknown }).type;
+    const asText = (block as { text?: unknown }).text;
+    if (maybeType === "text" && typeof asText === "string") {
+      return asText;
+    }
+
+    const argumentSource =
+      (block as { arguments?: unknown }).arguments ??
+      (block as { args?: unknown }).args ??
+      (block as { input?: unknown }).input ??
+      (block as { content?: unknown }).content ??
+      (block as { function?: { arguments?: unknown } }).function?.arguments ??
+      null;
+
+    if (typeof argumentSource === "string") {
+      return argumentSource;
+    }
+
+    if (
+      argumentSource &&
+      typeof argumentSource === "object" &&
+      !Array.isArray(argumentSource)
+    ) {
+      try {
+        return JSON.stringify(argumentSource);
+      } catch {
+        return "";
+      }
+    }
+
+    try {
+      return JSON.stringify(block);
+    } catch {
+      return "";
+    }
+  }
+
+  return "";
 }
 
 function parseCharacterFromText(text: string): CharacterLLMOutput | null {
